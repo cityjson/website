@@ -41,7 +41,17 @@
 
 - name: Autoconverter
   webpage: https://www.automapki.com/products/autoconverter.html
-  description: Import, export and convert many 3D mesh and solid file formats
+  description: Import, export and convert many 3D mesh and solid file formats.
+  foss: false
+  category: 
+    - viewer
+    - converter
+  interface: gui
+  type: app  
+
+- name: Automesher Application
+  webpage: https://www.automapki.com/products/automesher-application.html
+  description: Import & export many 3D mesh file formats for AutoCAD, Bricscad and ZWCAD DWG platforms.
   foss: false
   category: 
     - viewer
