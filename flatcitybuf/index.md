@@ -1,17 +1,15 @@
 ---
 layout: default
-title: FlatCityBuf
-parent: Experimental
-nav_order: 4
-has_children: false
-permalink: /experimental/flatcitybuf/
+title: "FlatCityBuf"
+nav_order: 5
+permalink: /flatcitybuf/
 ---
 
-<h1>{{ page.title }} <span class="label label-yellow">beta</span></h1>
+<h1>{{ page.title }}</h1>
 
 [![](flatcitybuf_logo.png){:width="250px"}](https://github.com/cityjson/flatcitybuf)
 
-**FlatCityBuf** is a new cloud-optimised format for 3D city models based on FlatBuffers and CityJSON.
+**FlatCityBuf** is a new cloud-optimised format for 3D city models based on [FlatBuffers](https://flatbuffers.dev/) and CityJSON.
 
 ## Key Features
 

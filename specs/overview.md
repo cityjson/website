@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Specifications
-nav_order: 5
+nav_order: 7
 permalink: /specs/overview/
 ---
 
@@ -22,6 +22,3 @@ permalink: /specs/overview/
 - [version 0.8](https://github.com/cityjson/specs/blob/0.8/docs/specs.rst)
 
 <i class="fas fa-external-link-alt"></i> See the [change log file](https://github.com/cityjson/specs/blob/main/changelog.md) to know what has exactly changed between versions.
-
-
-
