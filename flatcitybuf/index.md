@@ -31,7 +31,7 @@ FlatCityBuf demonstrates significant advantages over existing formats:
 
 ## Software and Schemas
 
-The schemas and accompanying software for conversion to/from CityJSON are publicly available at [https://github.com/cityjson/flatcitybuf](https://github.com/cityjson/flatcitybuf) under a permissive license.
+The schemas and accompanying software (Rust + Python + WASM) for conversion to/from CityJSON are publicly available at [https://github.com/cityjson/flatcitybuf](https://github.com/cityjson/flatcitybuf) under a permissive license.
 
 ## MSc thesis related to this topic
 
