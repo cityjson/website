@@ -17,7 +17,7 @@ permalink: /tutorials/flatcitybuf/
 
 ## Introduction
 
-FlatCityBuf is a cloud-optimized binary format for storing and retrieving 3D city models, combining CityJSON with FlatBuffers binary serialization and spatial indexing.
+FlatCityBuf is a cloud-optimised binary format for storing and retrieving 3D city models, combining CityJSON with FlatBuffers binary serialisation and spatial indexing.
 
 For details about FlatCityBuf's features, performance benefits, and research background, see the [FlatCityBuf overview page]({{ '/flatcitybuf/' | prepend: site.baseurl }}).
 
@@ -29,7 +29,7 @@ In this tutorial, you will learn how to:
 2. Access and query FlatCityBuf files with Python
 3. Use FlatCityBuf in web browsers with WebAssembly
 4. Integrate FlatCityBuf into Rust applications
-5. Optimize performance with spatial and attribute indexing
+5. Optimise performance with spatial and attribute indexing
 
 ---
 
@@ -106,13 +106,13 @@ The FlatCityBuf CLI provides commands for converting between formats and inspect
 
 ### Converting CityJSONSeq to FlatCityBuf
 
-The most common operation is converting CityJSONTextSequences (`.city.jsonl` file) to FlatCityBuf format.
+The most common operation is converting CityJSON Text Sequences (`.city.jsonl` file) to FlatCityBuf format.
 
-You can download a sample CityJSONTextSequences file from here: [delft.city.jsonl](https://github.com/cityjson/flatcitybuf/blob/bf270c345715e1020d314b7235ede8fffc6e0d85/examples/data/delft.city.jsonl).
+You can download a sample CityJSON Text Sequences file from here: [delft.city.jsonl](https://github.com/cityjson/flatcitybuf/blob/bf270c345715e1020d314b7235ede8fffc6e0d85/examples/data/delft.city.jsonl).
 
 #### Basic conversion
 
-```
+```bash
 $ fcb ser -i delft.city.jsonl -o delft.fcb
 Successfully encoded to FCB
 ```
@@ -129,7 +129,7 @@ $ fcb ser -i delft.city.jsonl -o delft.fcb \
   --attr-branching-factor 16
 ```
 
-The `--attr-index` flag takes a comma-separated list of attribute names to index. The branching factor (default: 256) controls the B+tree structure—higher values mean flatter trees and faster queries but slightly larger file sizes.
+The `--attr-index` flag takes a comma-separated list of attribute names to index. The branching factor (default: 256) controls the B+tree structure – higher values mean flatter trees and faster queries but slightly larger file sizes.
 
 #### Index all attributes
 
@@ -191,7 +191,7 @@ Several example FCB files are available for testing:
 
 <!-- TODO: add actual URLs to example files -->
 
-- **3DBAG all (70GB)**: Complete 3DBAG dataset with spati- [3DBAG all (70GB)](https://storage.googleapis.com/flatcitybuf/3dbag_all_index.fcb): serialised whole 3DBAG dataset with spatial and attribute indexing
+- [3DBAG all (70GB)](https://storage.googleapis.com/flatcitybuf/3dbag_all_index.fcb): Complete 3DBAG dataset with spatial and attribute indexing
 - [3DBAG small (3.4GB)](https://storage.googleapis.com/flatcitybuf/3dbag_subset_all_index.fcb)
 - [Delft (6MB)](https://github.com/cityjson/flatcitybuf/blob/bf270c345715e1020d314b7235ede8fffc6e0d85/examples/data/delft.fcb)
 
@@ -213,7 +213,7 @@ The Python bindings provide a convenient interface for reading and querying Flat
 
 #### Opening local files
 
-You can show metadata of FlatCityBuf file with the following code:
+You can show the metadata of a FlatCityBuf file with the following code:
 
 ```python
 import flatcitybuf as fcb
@@ -296,9 +296,9 @@ for feature in features:
 
 ### Attribute queries
 
-To query features based on attribute values, you must serialize the file with attribute indexing enabled.
+To query features based on attribute values, you must serialise the file with attribute indexing enabled.
 
-```
+```bash
 $ fcb ser -i delft.city.jsonl -o delft.fcb -A --attr-branching-factor 16
 Successfully encoded to FCB
 ```
@@ -334,7 +334,7 @@ tall_glass_buildings = list(
 
 print(f"Found {len(tall_glass_buildings)} tall glass buildings")
 
-# This will shows like this:
+# This will show like this:
 # Found 1 matching buildings
 # Found 4 matching buildings
 # Found 0 tall glass buildings
@@ -355,7 +355,7 @@ fcb.Operator.Le    # Less than or equal
 
 ### HTTP and cloud access
 
-Now you'll see the most powerful part of FlatCityBuf, retrieving data from huge remote file (70GB big!) over HTTP.
+Now you'll see the most powerful part of FlatCityBuf: retrieving data from a huge remote file (70GB!) over HTTP.
 
 For remote FCB files, use the async reader:
 
@@ -385,7 +385,7 @@ async def read_remote_fcb():
     async_iter = opened_reader.select_all()
 
     count = 0
-    for _ in range(2):  # Get first 10 features
+    for _ in range(2):  # Get first 2 features
         feature = await async_iter.next()
         if feature is None:
             break
@@ -424,7 +424,7 @@ if __name__ == "__main__":
 
 ```shell
 python main.py
-# This will shows like this in milliseconds!
+# This will show like this in milliseconds!
 # Remote file has 10771547 features
 # CityJSON version: 2.0
 # Feature 0: NL.IMBAG.Pand.0983100000055544
@@ -435,7 +435,7 @@ python main.py
 #   Found feature: NL.IMBAG.Pand.0503100000012869
 ```
 
-No matter how big the file is, you can query it with milliseconds! :D
+No matter how big the file is, you can query it in milliseconds! :D
 
 ---
 
@@ -464,7 +464,7 @@ Or include it in your `package.json`:
 
 ### Reading FCB files over HTTP
 
-Create a file called `index.html` and paste the following code into it. Open the HTML file in your browser and you'll the UI like this:
+Create a file called `index.html` and paste the following code into it. Open the HTML file in your browser and you'll see the UI like this:
 ![HTML to interact with FlatCityBuf over HTTP](./files/fcb_demo.png)
 
 You can test it to fetch data with bounding box or attribute query.
@@ -488,7 +488,7 @@ As part of this tutorial, we'll use a minimal example file of HTML and JavaScrip
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
-      background-color: #f5f5f5;
+      background-colour: #f5f5f5;
     }
 
     h1 {
@@ -496,7 +496,7 @@ As part of this tutorial, we'll use a minimal example file of HTML and JavaScrip
     }
 
     #controls {
-      background-color: white;
+      background-colour: white;
       border: 1px solid #ddd;
       border-radius: 4px;
       padding: 20px;
@@ -529,7 +529,7 @@ As part of this tutorial, we'll use a minimal example file of HTML and JavaScrip
     .query-inputs {
       display: none;
       padding: 15px;
-      background-color: #f9f9f9;
+      background-colour: #f9f9f9;
       border-radius: 4px;
       margin-bottom: 15px;
     }
@@ -577,7 +577,7 @@ As part of this tutorial, we'll use a minimal example file of HTML and JavaScrip
     }
 
     button {
-      background-color: #4CAF50;
+      background-colour: #4CAF50;
       color: white;
       padding: 10px 20px;
       border: none;
@@ -588,24 +588,24 @@ As part of this tutorial, we'll use a minimal example file of HTML and JavaScrip
     }
 
     button:hover {
-      background-color: #45a049;
+      background-colour: #45a049;
     }
 
     button:disabled {
-      background-color: #cccccc;
+      background-colour: #cccccc;
       cursor: not-allowed;
     }
 
     button.secondary {
-      background-color: #2196F3;
+      background-colour: #2196F3;
     }
 
     button.secondary:hover {
-      background-color: #0b7dda;
+      background-colour: #0b7dda;
     }
 
     #output {
-      background-color: white;
+      background-colour: white;
       border: 1px solid #ddd;
       border-radius: 4px;
       padding: 15px;
@@ -681,7 +681,7 @@ As part of this tutorial, we'll use a minimal example file of HTML and JavaScrip
       <div id="attr-query-inputs" class="query-inputs">
         <label for="query-input">Attribute Query (JSON array):</label>
         <textarea id="query-input" rows="4">[["identificatie", "Eq", "NL.IMBAG.Pand.0503100000012869"]]</textarea>
-        <small style="color: #666; margin-top: 5px; display: block;">
+        <small style="colour: #666; margin-top: 5px; display: block;">
           Example: [["field", "Eq", "value"], ["numeric_field", "Gt", 5.0]]<br>
           Operators: Eq, Ne, Lt, Le, Gt, Ge
         </small>
@@ -873,7 +873,7 @@ For maximum performance and control, you can use FlatCityBuf directly in Rust ap
 
 ### Adding to your project
 
-Init a new Rust project:
+Initialise a new Rust project:
 
 ```bash
 cargo new fcb_demo
@@ -891,9 +891,7 @@ fcb_core = { version = "0.5.0", features = ["http"] }
 
 ```
 
-### Reading FCB files
-
-### Spatial queries
+### Basic reading and spatial queries
 
 Use bounding box queries with the packed R-tree index:
 
@@ -986,7 +984,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ---
 
-## Performance tips and best practices
+## Performance tips and best practises
 
 ### Indexing tips
 
@@ -1007,23 +1005,23 @@ fcb ser -i data.city.jsonl -o data.fcb \
   --attr-index height --attr-branching-factor 128
 ```
 
-The larger the branching factor, the more nodes are fetch per one round trip to the server. In many case especially over HTTP, the round trip time dominates the total time more than the time to fetch redundant nodes.
+The larger the branching factor, the more nodes are fetched per one round trip to the server. In many cases, especially over HTTP, the round trip time dominates the total time more than the time to fetch redundant nodes.
 
 **Recommendations:**
 
 - **Default (256)**: Good balance for most datasets
 - **Higher (512-1024)**: For query-heavy applications with huge datasets (100GB or more)
-- **Lower (64-128)**: For datasets with relatively small size (10GB or less)
+- **Lower (64-128)**: For datasets with a relatively small size (10GB or less)
 
 #### Cardinality of attributes
 
-Since the attribute index is a B+tree, the attribute having higher cardinality (more unique values) will be better for indexing while lower cardinality attributes will be less efficient or sometimes not worth indexing. As extreme example, if you have an attribute with only 2 unique values (e.g. true/false), you don't get any benefit from indexing it.
+Since the attribute index is a B+tree, attributes with higher cardinality (more unique values) will be better for indexing, whilst lower cardinality attributes will be less efficient or sometimes not worth indexing. As an extreme example, if you have an attribute with only 2 unique values (e.g. true/false), you won't get any benefit from indexing it.
 
-### HTTP and cloud optimization
+### HTTP and cloud optimisation
 
 #### Range request batching
 
-Once the reader is initialised, the reader fetch features from the server when it's called with `next()` method or relevant iterators (depending on which language you are using). If you use something like `collect()`, this fetch all features at once, which is not efficient. We recommend to use streaming approach instead (use `next` to fetch features when needed)
+Once the reader is initialised, the reader fetches features from the server when it's called with the `next()` method or relevant iterators (depending on which language you are using). If you use something like `collect()`, this fetches all features at once, which is not efficient. We recommend using a streaming approach instead (use `next` to fetch features when needed)
 
 **Good:**
 
@@ -1044,12 +1042,12 @@ all_features = list(reader)
 
 Especially when you use FlatCityBuf in Rust, there are two ways to access data:
 
-1. Use `cur_feature()` method to get the current feature in FlatBuffer format
-2. Use `cur_cj_feature()` method to get the current feature in CityJSON format
+1. Use the `cur_feature()` method to get the current feature in FlatBuffer format
+2. Use the `cur_cj_feature()` method to get the current feature in CityJSON format
 
-The first one returns in FlatBuffer format and achieves zero-copy deserialization. If you access to the specific field of the feature, only that field is loaded. On the other hand, the second one returns features in CityJSON format, which internally parse FlatBuffers into CityJSON objects (not zero-copy). You choose proper one based on your use case.
+The first one returns data in FlatBuffer format and achieves zero-copy deserialisation. If you access a specific field of the feature, only that field is loaded. On the other hand, the second one returns features in CityJSON format, which internally parses FlatBuffers into CityJSON objects (not zero-copy). Choose the appropriate one based on your use case.
 
-**Zero-copy deserialization:**
+**Zero-copy deserialisation:**
 
 ```rust
 while let Some(feature_buf) = reader.next()? {
@@ -1058,7 +1056,7 @@ while let Some(feature_buf) = reader.next()? {
 }
 ```
 
-**Not zero-copy deserialization:**
+**Not zero-copy deserialisation:**
 
 ```rust
 while let Some(feature_buf) = reader.next()? {
