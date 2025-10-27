@@ -21,7 +21,7 @@ FlatCityBuf is a cloud-optimised binary format for storing and retrieving 3D cit
 
 For details about FlatCityBuf's features, performance benefits, and research background, see the [FlatCityBuf overview page]({{ '/flatcitybuf/' | prepend: site.baseurl }}).
 
-### Tutorial goals
+## Tutorial goals
 
 In this tutorial, you will learn how to:
 
@@ -52,11 +52,17 @@ The command-line interface is useful for converting files and inspecting FCB dat
 
 **Option 1: Install from crates.io**
 
+{% raw %}
+
 ```bash
 cargo install fcb_cli
 ```
 
+{% endraw %}
+
 **Option 2: Build from source**
+
+{% raw %}
 
 ```bash
 git clone https://github.com/cityjson/flatcitybuf.git
@@ -64,15 +70,23 @@ cd flatcitybuf/src/rust
 cargo build --workspace --all-features --exclude fcb_wasm --release
 ```
 
+{% endraw %}
+
 The binary will be available at `target/release/fcb`.
 
 #### Python bindings
+
+{% raw %}
 
 ```bash
 pip install flatcitybuf
 ```
 
+{% endraw %}
+
 For development or building from source:
+
+{% raw %}
 
 ```bash
 pip install maturin
@@ -80,15 +94,23 @@ cd flatcitybuf/src/rust/fcb_py
 maturin develop --features http
 ```
 
+{% endraw %}
+
 #### JavaScript/TypeScript (npm)
+
+{% raw %}
 
 ```bash
 npm install @cityjson/flatcitybuf
 ```
 
+{% endraw %}
+
 #### Rust library
 
 Add to your `Cargo.toml`:
+
+{% raw %}
 
 ```toml
 [dependencies]
@@ -97,6 +119,8 @@ fcb_core = "0.5.0"
 # For HTTP support
 fcb_core = { version = "0.5.0", features = ["http"] }
 ```
+
+{% endraw %}
 
 ---
 
@@ -110,18 +134,24 @@ The most common operation is converting CityJSON Text Sequences (`.city.jsonl` f
 
 You can download a sample CityJSON Text Sequences file from here: [delft.city.jsonl](https://github.com/cityjson/flatcitybuf/blob/bf270c345715e1020d314b7235ede8fffc6e0d85/examples/data/delft.city.jsonl).
 
-#### Basic conversion
+### Basic conversion
+
+{% raw %}
 
 ```bash
 $ fcb ser -i delft.city.jsonl -o delft.fcb
 Successfully encoded to FCB
 ```
 
+{% endraw %}
+
 This creates a FlatCityBuf file with spatial indexing enabled by default.
 
-#### With attribute indexing
+### With attribute indexing
 
 To enable fast queries on specific attributes:
+
+{% raw %}
 
 ```bash
 $ fcb ser -i delft.city.jsonl -o delft.fcb \
@@ -129,22 +159,30 @@ $ fcb ser -i delft.city.jsonl -o delft.fcb \
   --attr-branching-factor 16
 ```
 
+{% endraw %}
+
 The `--attr-index` flag takes a comma-separated list of attribute names to index. The branching factor (default: 256) controls the B+tree structure – higher values mean flatter trees and faster queries but slightly larger file sizes.
 
-#### Index all attributes
+### Index all attributes
 
 If you want to index every attribute found in the dataset:
+
+{% raw %}
 
 ```bash
 $ fcb ser -i delft.city.jsonl -o delft.fcb -A
 Successfully encoded to FCB
 ```
 
+{% endraw %}
+
 This is convenient but will increase file size and conversion time.
 
-#### Filtering by bounding box
+### Filtering by bounding box
 
 You can filter features during conversion to create a subset:
+
+{% raw %}
 
 ```bash
 $ fcb ser -i delft.city.jsonl -o filtered.fcb \
@@ -152,20 +190,28 @@ $ fcb ser -i delft.city.jsonl -o filtered.fcb \
 Successfully encoded to FCB
 ```
 
+{% endraw %}
+
 The bounding box format is: `minx,miny,maxx,maxy`
 
 ### Converting FlatCityBuf back to CityJSONSeq
 
 To convert an FCB file back to CityJSON Text Sequences:
 
+{% raw %}
+
 ```bash
 $ fcb deser -i delft.fcb -o delft.city.jsonl
 Successfully decoded from FCB
 ```
 
+{% endraw %}
+
 ### Inspecting FCB files
 
 To view information about an FCB file:
+
+{% raw %}
 
 ```bash
 $ fcb info -i delft.fcb
@@ -180,6 +226,8 @@ FCB File Info:
     Min: [84501.5546875, 445805.03125, -3.746997833251953]
     Max: [85675.234375, 446983.46875, 95.04200744628906]
 ```
+
+{% endraw %}
 
 ---
 
@@ -215,6 +263,8 @@ The Python bindings provide a convenient interface for reading and querying Flat
 
 You can show the metadata of a FlatCityBuf file with the following code:
 
+{% raw %}
+
 ```python
 import flatcitybuf as fcb
 
@@ -233,9 +283,13 @@ print(f"Transform scale: {cityjson.transform.scale}")
 print(f"Transform translate: {cityjson.transform.translate}")
 ```
 
+{% endraw %}
+
 #### Iterating through features
 
 This will print the first 2 features:
+
+{% raw %}
 
 ```python
 feature_count = 0
@@ -273,9 +327,13 @@ feature_count = 0
 # features will be printed here
 ```
 
+{% endraw %}
+
 ### Spatial queries
 
 FlatCityBuf's spatial indexing enables fast bounding box queries:
+
+{% raw %}
 
 ```python
 # Query features within a bounding box
@@ -294,16 +352,24 @@ for feature in features:
 # ...
 ```
 
+{% endraw %}
+
 ### Attribute queries
 
 To query features based on attribute values, you must serialise the file with attribute indexing enabled.
+
+{% raw %}
 
 ```bash
 $ fcb ser -i delft.city.jsonl -o delft.fcb -A --attr-branching-factor 16
 Successfully encoded to FCB
 ```
 
+{% endraw %}
+
 Query features based on attribute values:
+
+{% raw %}
 
 ```python
 # Create attribute filters
@@ -340,9 +406,13 @@ print(f"Found {len(tall_glass_buildings)} tall glass buildings")
 # Found 0 tall glass buildings
 ```
 
+{% endraw %}
+
 #### Available operators
 
 You can try the following operators:
+
+{% raw %}
 
 ```python
 fcb.Operator.Eq    # Equal
@@ -353,6 +423,8 @@ fcb.Operator.Lt    # Less than
 fcb.Operator.Le    # Less than or equal
 ```
 
+{% endraw %}
+
 ### HTTP and cloud access
 
 Now you'll see the most powerful part of FlatCityBuf: retrieving data from a huge remote file (70GB!) over HTTP.
@@ -361,6 +433,8 @@ For remote FCB files, use the async reader:
 
 <details>
 <summary>Click to show example: Query a huge FlatCityBuf over HTTP in Python (async, streaming)</summary>
+
+{% raw %}
 
 ```python
 import asyncio
@@ -420,7 +494,11 @@ if __name__ == "__main__":
     asyncio.run(read_remote_fcb())
 ```
 
+{% endraw %}
+
 </details>
+
+{% raw %}
 
 ```shell
 python main.py
@@ -435,6 +513,8 @@ python main.py
 #   Found feature: NL.IMBAG.Pand.0503100000012869
 ```
 
+{% endraw %}
+
 No matter how big the file is, you can query it in milliseconds! :D
 
 ---
@@ -447,12 +527,18 @@ FlatCityBuf provides WebAssembly bindings for efficient CityJSON processing in w
 
 Install the npm package:
 
+{% raw %}
+
 ```bash
 npm init -y # create package.json file
 npm install @cityjson/flatcitybuf
 ```
 
+{% endraw %}
+
 Or include it in your `package.json`:
+
+{% raw %}
 
 ```json
 {
@@ -462,408 +548,16 @@ Or include it in your `package.json`:
 }
 ```
 
+{% endraw %}
+
 ### Reading FCB files over HTTP
 
 Create a file called `index.html` and paste the following code into it. Open the HTML file in your browser and you'll see the UI like this:
-![HTML to interact with FlatCityBuf over HTTP](./files/fcb_demo.png)
+![HTML to interact with FlatCityBuf over HTTP](../files/fcb_demo.png)
 
 You can test it to fetch data with bounding box or attribute query.
 
-<details>
-<summary>Click to show HTML to interact with FlatCityBuf over HTTP</summary>
-
-As part of this tutorial, we'll use a minimal example file of HTML and JavaScript:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FlatCityBuf Browser Demo</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background-colour: #f5f5f5;
-    }
-
-    h1 {
-      color: #333;
-    }
-
-    #controls {
-      background-colour: white;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .control-section {
-      margin-bottom: 20px;
-    }
-
-    .control-section h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      color: #555;
-    }
-
-    .query-type-selector {
-      margin-bottom: 15px;
-    }
-
-    .query-type-selector label {
-      margin-right: 20px;
-      cursor: pointer;
-    }
-
-    .query-type-selector input[type="radio"] {
-      margin-right: 5px;
-    }
-
-    .query-inputs {
-      display: none;
-      padding: 15px;
-      background-colour: #f9f9f9;
-      border-radius: 4px;
-      margin-bottom: 15px;
-    }
-
-    .query-inputs.active {
-      display: block;
-    }
-
-    .query-inputs label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #555;
-    }
-
-    .bbox-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .input-group label {
-      font-size: 12px;
-      margin-bottom: 3px;
-    }
-
-    input[type="number"],
-    input[type="text"],
-    textarea {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      font-family: inherit;
-    }
-
-    textarea {
-      font-family: monospace;
-      resize: vertical;
-    }
-
-    button {
-      background-colour: #4CAF50;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-right: 10px;
-    }
-
-    button:hover {
-      background-colour: #45a049;
-    }
-
-    button:disabled {
-      background-colour: #cccccc;
-      cursor: not-allowed;
-    }
-
-    button.secondary {
-      background-colour: #2196F3;
-    }
-
-    button.secondary:hover {
-      background-colour: #0b7dda;
-    }
-
-    #output {
-      background-colour: white;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 15px;
-      margin-top: 20px;
-      white-space: pre-wrap;
-      font-family: monospace;
-      font-size: 14px;
-      max-height: 600px;
-      overflow-y: auto;
-    }
-
-    .error {
-      color: #d32f2f;
-      font-weight: bold;
-    }
-
-    .success {
-      color: #388e3c;
-      font-weight: bold;
-    }
-
-    .info {
-      color: #1976d2;
-    }
-  </style>
-</head>
-
-<body>
-  <h1>FlatCityBuf Browser Demo</h1>
-
-  <div id="controls">
-    <div class="control-section">
-      <h3>Query Type</h3>
-      <div class="query-type-selector">
-        <label>
-          <input type="radio" name="queryType" value="all" checked onchange="switchQueryType('all')">
-          Select All
-        </label>
-        <label>
-          <input type="radio" name="queryType" value="bbox" onchange="switchQueryType('bbox')">
-          Bounding Box
-        </label>
-        <label>
-          <input type="radio" name="queryType" value="attr" onchange="switchQueryType('attr')">
-          Attribute Query
-        </label>
-      </div>
-
-      <!-- Bbox query inputs -->
-      <div id="bbox-query-inputs" class="query-inputs">
-        <label>Bounding Box Coordinates:</label>
-        <div class="bbox-grid">
-          <div class="input-group">
-            <label for="min-x-input">Min X:</label>
-            <input type="number" id="min-x-input" step="any" value="84000" placeholder="Min X">
-          </div>
-          <div class="input-group">
-            <label for="min-y-input">Min Y:</label>
-            <input type="number" id="min-y-input" step="any" value="446000" placeholder="Min Y">
-          </div>
-          <div class="input-group">
-            <label for="max-x-input">Max X:</label>
-            <input type="number" id="max-x-input" step="any" value="85000" placeholder="Max X">
-          </div>
-          <div class="input-group">
-            <label for="max-y-input">Max Y:</label>
-            <input type="number" id="max-y-input" step="any" value="447000" placeholder="Max Y">
-          </div>
-        </div>
-      </div>
-
-      <!-- Attribute query inputs -->
-      <div id="attr-query-inputs" class="query-inputs">
-        <label for="query-input">Attribute Query (JSON array):</label>
-        <textarea id="query-input" rows="4">[["identificatie", "Eq", "NL.IMBAG.Pand.0503100000012869"]]</textarea>
-        <small style="colour: #666; margin-top: 5px; display: block;">
-          Example: [["field", "Eq", "value"], ["numeric_field", "Gt", 5.0]]<br>
-          Operators: Eq, Ne, Lt, Le, Gt, Ge
-        </small>
-      </div>
-    </div>
-
-    <div class="control-section">
-      <button id="loadBtn" onclick="loadFcbData()">Execute Query</button>
-      <button class="secondary" onclick="clearOutput()">Clear Output</button>
-    </div>
-  </div>
-
-  <div id="output">Select a query type and click "Execute Query" to load FlatCityBuf data...</div>
-
-  <script type="module">
-    import init, { HttpFcbReader, WasmSpatialQuery, WasmAttrQuery } from './node_modules/@cityjson/flatcitybuf/fcb_wasm.js';
-
-    let wasmInitialized = false;
-    let currentQueryType = 'all';
-
-    // Switch query type UI
-    window.switchQueryType = function (type) {
-      currentQueryType = type;
-      document.getElementById('bbox-query-inputs').classList.remove('active');
-      document.getElementById('attr-query-inputs').classList.remove('active');
-
-      if (type === 'bbox') {
-        document.getElementById('bbox-query-inputs').classList.add('active');
-      } else if (type === 'attr') {
-        document.getElementById('attr-query-inputs').classList.add('active');
-      }
-    };
-
-    // Clear output
-    window.clearOutput = function () {
-      document.getElementById('output').innerHTML = 'Output cleared. Ready for next query.';
-    };
-
-    // Main function to load FCB data
-    window.loadFcbData = async function () {
-      const output = document.getElementById('output');
-      const btn = document.getElementById('loadBtn');
-
-      try {
-        btn.disabled = true;
-        output.innerHTML = 'Starting query execution...\n';
-
-        // Initialize the WASM module (only once)
-        if (!wasmInitialized) {
-          output.innerHTML += 'Initializing WASM module...\n';
-          await init();
-          wasmInitialized = true;
-          output.innerHTML += '<span class="success">✓ WASM module initialized</span>\n\n';
-        }
-
-        // Create an HTTP FlatCityBuf reader
-        output.innerHTML += 'Creating HTTP reader...\n';
-        const reader = await new HttpFcbReader("https://storage.googleapis.com/flatcitybuf/3dbag_subset_all_index.fcb");
-        output.innerHTML += '<span class="success">✓ Reader created</span>\n\n';
-
-        // Get CityJSON metadata
-        output.innerHTML += 'Fetching CityJSON metadata...\n';
-        const metadata = await reader.cityjson();
-        output.innerHTML += '<span class="success">✓ Metadata loaded</span>\n';
-        output.innerHTML += `Version: ${metadata.version}\n`;
-        if (metadata.transform) {
-          output.innerHTML += `Transform: ${JSON.stringify(metadata.transform, null, 2)}\n`;
-        }
-        output.innerHTML += '\n';
-
-        // Execute query based on selected type
-        let iter;
-        if (currentQueryType === 'all') {
-          output.innerHTML += '<span class="info">Query Type: SELECT ALL</span>\n';
-          iter = await reader.select_all();
-        } else if (currentQueryType === 'bbox') {
-          const minX = parseFloat(document.getElementById('min-x-input').value);
-          const minY = parseFloat(document.getElementById('min-y-input').value);
-          const maxX = parseFloat(document.getElementById('max-x-input').value);
-          const maxY = parseFloat(document.getElementById('max-y-input').value);
-
-          if (isNaN(minX) || isNaN(minY) || isNaN(maxX) || isNaN(maxY)) {
-            output.innerHTML += '<span class="error">Error: Invalid bbox coordinates. Please enter valid numbers.</span>\n';
-            return;
-          }
-
-          output.innerHTML += '<span class="info">Query Type: BOUNDING BOX</span>\n';
-          output.innerHTML += `BBox: [${minX}, ${minY}, ${maxX}, ${maxY}]\n\n`;
-
-          const queryObject = {
-            type: 'bbox',
-            minX: minX,
-            minY: minY,
-            maxX: maxX,
-            maxY: maxY
-          };
-
-          const spatialQuery = new WasmSpatialQuery(queryObject);
-          iter = await reader.select_spatial(spatialQuery);
-        } else if (currentQueryType === 'attr') {
-          const queryInput = document.getElementById('query-input');
-          const queryStr = queryInput.value.trim();
-
-          let queryArray;
-          try {
-            queryArray = JSON.parse(queryStr);
-          } catch (e) {
-            output.innerHTML += `<span class="error">Error: Invalid JSON for query: ${e.message}</span>\n`;
-            return;
-          }
-
-          output.innerHTML += '<span class="info">Query Type: ATTRIBUTE QUERY</span>\n';
-          output.innerHTML += `Query: ${JSON.stringify(queryArray, null, 2)}\n\n`;
-
-          const attrQuery = new WasmAttrQuery(queryArray);
-          iter = await reader.select_attr_query(attrQuery);
-        }
-
-        const count = iter.features_count();
-        output.innerHTML += `<span class="success">✓ Found ${count !== undefined ? count : 'unknown number of'} features</span>\n\n`;
-
-        // Process features
-        output.innerHTML += '=== Features ===\n';
-        let featureNum = 0;
-        let feature;
-
-        while ((feature = await iter.next()) !== undefined) {
-          featureNum++;
-          output.innerHTML += `\n--- Feature ${featureNum} ---\n`;
-          output.innerHTML += `ID: ${feature.id || 'N/A'}\n`;
-          output.innerHTML += `Type: ${feature.type || 'N/A'}\n`;
-
-          if (feature.city_objects) {
-            const coCount = Object.keys(feature.city_objects).length;
-            output.innerHTML += `City objects: ${coCount} object(s)\n`;
-            // Show first few object IDs
-            const firstObjs = Object.keys(feature.city_objects).slice(0, 3);
-            if (firstObjs.length > 0) {
-              output.innerHTML += `  Sample IDs: ${firstObjs.join(', ')}\n`;
-            }
-          }
-
-          if (feature.vertices) {
-            output.innerHTML += `Vertices: ${feature.vertices.length} vertices\n`;
-          }
-
-          if (feature.attributes) {
-            output.innerHTML += `Attributes: ${JSON.stringify(feature.attributes, null, 2)}\n`;
-          }
-
-          // Limit output to first 10 features to avoid overwhelming the page
-          if (featureNum >= 10) {
-            output.innerHTML += `\n<span class="info">... (showing first 10 of ${count !== undefined ? count : 'many'} features)</span>\n`;
-            break;
-          }
-
-          // Auto-scroll to bottom
-          output.scrollTop = output.scrollHeight;
-        }
-
-        if (featureNum === 0) {
-          output.innerHTML += '\n<span class="info">No features found matching the query.</span>\n';
-        }
-
-        output.innerHTML += '\n<span class="success">✓ Query Complete!</span>\n';
-
-      } catch (error) {
-        output.innerHTML += `\n<span class="error">✗ Error: ${error.message}</span>\n`;
-        output.innerHTML += `\nStack trace:\n${error.stack}\n`;
-        console.error('Error details:', error);
-      } finally {
-        btn.disabled = false;
-        output.scrollTop = output.scrollHeight;
-      }
-    };
-  </script>
-</body>
-
-</html>
-```
-
-</details>
+You can download the complete HTML file here: [fcb_demo.html](../files/fcb_demo.html)
 
 ---
 
@@ -875,12 +569,18 @@ For maximum performance and control, you can use FlatCityBuf directly in Rust ap
 
 Initialise a new Rust project:
 
+{% raw %}
+
 ```bash
 cargo new fcb_demo
 cd fcb_demo
 ```
 
+{% endraw %}
+
 Add FlatCityBuf to your `Cargo.toml`:
+
+{% raw %}
 
 ```toml
 [dependencies]
@@ -891,9 +591,13 @@ fcb_core = { version = "0.5.0", features = ["http"] }
 
 ```
 
+{% endraw %}
+
 ### Basic reading and spatial queries
 
 Use bounding box queries with the packed R-tree index:
+
+{% raw %}
 
 ```rust
 use fcb_core::{FcbReader, packed_rtree::Query};
@@ -930,22 +634,34 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```
 
+{% endraw %}
+
 then run it with:
+
+{% raw %}
 
 ```bash
 cargo run
 ```
+
+{% endraw %}
 
 ### HTTP streaming
 
 For cloud-based FCB files, use the async HTTP reader:
 Don't forget to add `tokio` to your `Cargo.toml`:
 
+{% raw %}
+
 ```toml
 [dependencies]
 tokio = { version = "1.48.0", features = ["rt-multi-thread", "macros"] }
 
 ```
+
+{% endraw %}
+
+{% raw %}
 
 ```rust
 use fcb_core::{FcbReader, HttpFcbReader, packed_rtree::Query};
@@ -982,6 +698,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```
 
+{% endraw %}
+
 ---
 
 ## Performance tips and best practises
@@ -991,6 +709,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 #### Branching factor considerations for attribute indexing
 
 The branching factor controls B+tree structure:
+
+{% raw %}
 
 ```bash
 # Default (256) - good for most cases
@@ -1004,6 +724,8 @@ fcb ser -i data.city.jsonl -o data.fcb \
 fcb ser -i data.city.jsonl -o data.fcb \
   --attr-index height --attr-branching-factor 128
 ```
+
+{% endraw %}
 
 The larger the branching factor, the more nodes are fetched per one round trip to the server. In many cases, especially over HTTP, the round trip time dominates the total time more than the time to fetch redundant nodes.
 
@@ -1025,18 +747,26 @@ Once the reader is initialised, the reader fetches features from the server when
 
 **Good:**
 
+{% raw %}
+
 ```python
 reader = reader.select_all()
 for feature in reader:
     process(feature)
 ```
 
+{% endraw %}
+
 **Avoid:**
+
+{% raw %}
 
 ```python
 reader = reader.select_all().collect()
 all_features = list(reader)
 ```
+
+{% endraw %}
 
 ### Zero-copy benefits
 
@@ -1049,6 +779,8 @@ The first one returns data in FlatBuffer format and achieves zero-copy deseriali
 
 **Zero-copy deserialisation:**
 
+{% raw %}
+
 ```rust
 while let Some(feature_buf) = reader.next()? {
     let cj_feature = feature_buf.cur_feature()?; // You get flatbuffer feature
@@ -1056,7 +788,11 @@ while let Some(feature_buf) = reader.next()? {
 }
 ```
 
+{% endraw %}
+
 **Not zero-copy deserialisation:**
+
+{% raw %}
 
 ```rust
 while let Some(feature_buf) = reader.next()? {
@@ -1065,11 +801,13 @@ while let Some(feature_buf) = reader.next()? {
 }
 ```
 
+{% endraw %}
+
 ---
 
-### Frequently asked questions
+## Frequently asked questions
 
-#### Can I edit FCB files directly?
+### Can I edit FCB files directly?
 
 No, FCB files are binary and not designed for direct editing. To modify data:
 
@@ -1077,7 +815,7 @@ No, FCB files are binary and not designed for direct editing. To modify data:
 2. Edit the CityJSONSeq file
 3. Convert back to FCB: `fcb ser -i data.city.jsonl -o data.fcb`
 
-#### How do I update a single feature?
+### How do I update a single feature?
 
 FCB files are immutable. To update features, you must regenerate the entire file. For frequently updated data, consider:
 
@@ -1085,7 +823,7 @@ FCB files are immutable. To update features, you must regenerate the entire file
 - Regenerating FCB files periodically
 - Using FCB for read-heavy, write-light scenarios
 
-#### What's the maximum file size?
+### What's the maximum file size?
 
 FlatCityBuf has been tested with files up to 70GB (complete 3DBAG dataset). Theoretical limits are much higher, constrained mainly by:
 
@@ -1093,11 +831,11 @@ FlatCityBuf has been tested with files up to 70GB (complete 3DBAG dataset). Theo
 - Memory for index construction during writing
 - HTTP server capabilities for remote access
 
-#### Can I use FCB with other GIS tools?
+### Can I use FCB with other GIS tools?
 
 Currently, FCB is primarily used with its own libraries.
 
-#### How do I choose between CityJSON and FlatCityBuf?
+### How do I choose between CityJSON and FlatCityBuf?
 
 Use **CityJSON/CityJSONSeq** when:
 
@@ -1113,6 +851,6 @@ Use **FlatCityBuf** when:
 - Spatial/attribute queries are needed
 - Cloud/HTTP access is required
 
-#### Does FlatCityBuf support textures and appearances?
+### Does FlatCityBuf support textures and appearances?
 
 Yes, FlatCityBuf preserves all CityJSON data including textures and appearances.

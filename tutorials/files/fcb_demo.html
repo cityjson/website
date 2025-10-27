@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlatCityBuf Browser Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-colour: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    #controls {
+      background-colour: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .control-section {
+      margin-bottom: 20px;
+    }
+
+    .control-section h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    .query-type-selector {
+      margin-bottom: 15px;
+    }
+
+    .query-type-selector label {
+      margin-right: 20px;
+      cursor: pointer;
+    }
+
+    .query-type-selector input[type="radio"] {
+      margin-right: 5px;
+    }
+
+    .query-inputs {
+      display: none;
+      padding: 15px;
+      background-colour: #f9f9f9;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .query-inputs.active {
+      display: block;
+    }
+
+    .query-inputs label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .bbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-group label {
+      font-size: 12px;
+      margin-bottom: 3px;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    textarea {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    textarea {
+      font-family: monospace;
+      resize: vertical;
+    }
+
+    button {
+      background-colour: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background-colour: #45a049;
+    }
+
+    button:disabled {
+      background-colour: #cccccc;
+      cursor: not-allowed;
+    }
+
+    button.secondary {
+      background-colour: #2196F3;
+    }
+
+    button.secondary:hover {
+      background-colour: #0b7dda;
+    }
+
+    #output {
+      background-colour: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .error {
+      color: #d32f2f;
+      font-weight: bold;
+    }
+
+    .success {
+      color: #388e3c;
+      font-weight: bold;
+    }
+
+    .info {
+      color: #1976d2;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>FlatCityBuf Browser Demo</h1>
+
+  <div id="controls">
+    <div class="control-section">
+      <h3>Query Type</h3>
+      <div class="query-type-selector">
+        <label>
+          <input type="radio" name="queryType" value="all" checked onchange="switchQueryType('all')">
+          Select All
+        </label>
+        <label>
+          <input type="radio" name="queryType" value="bbox" onchange="switchQueryType('bbox')">
+          Bounding Box
+        </label>
+        <label>
+          <input type="radio" name="queryType" value="attr" onchange="switchQueryType('attr')">
+          Attribute Query
+        </label>
+      </div>
+
+      <!-- Bbox query inputs -->
+      <div id="bbox-query-inputs" class="query-inputs">
+        <label>Bounding Box Coordinates:</label>
+        <div class="bbox-grid">
+          <div class="input-group">
+            <label for="min-x-input">Min X:</label>
+            <input type="number" id="min-x-input" step="any" value="84000" placeholder="Min X">
+          </div>
+          <div class="input-group">
+            <label for="min-y-input">Min Y:</label>
+            <input type="number" id="min-y-input" step="any" value="446000" placeholder="Min Y">
+          </div>
+          <div class="input-group">
+            <label for="max-x-input">Max X:</label>
+            <input type="number" id="max-x-input" step="any" value="85000" placeholder="Max X">
+          </div>
+          <div class="input-group">
+            <label for="max-y-input">Max Y:</label>
+            <input type="number" id="max-y-input" step="any" value="447000" placeholder="Max Y">
+          </div>
+        </div>
+      </div>
+
+      <!-- Attribute query inputs -->
+      <div id="attr-query-inputs" class="query-inputs">
+        <label for="query-input">Attribute Query (JSON array):</label>
+        <textarea id="query-input" rows="4">[["identificatie", "Eq", "NL.IMBAG.Pand.0503100000012869"]]</textarea>
+        <small style="colour: #666; margin-top: 5px; display: block;">
+          Example: [["field", "Eq", "value"], ["numeric_field", "Gt", 5.0]]<br>
+          Operators: Eq, Ne, Lt, Le, Gt, Ge
+        </small>
+      </div>
+    </div>
+
+    <div class="control-section">
+      <button id="loadBtn" onclick="loadFcbData()">Execute Query</button>
+      <button class="secondary" onclick="clearOutput()">Clear Output</button>
+    </div>
+  </div>
+
+  <div id="output">Select a query type and click "Execute Query" to load FlatCityBuf data...</div>
+
+  <script type="module">
+    import init, { HttpFcbReader, WasmSpatialQuery, WasmAttrQuery } from './node_modules/@cityjson/flatcitybuf/fcb_wasm.js';
+
+    let wasmInitialized = false;
+    let currentQueryType = 'all';
+
+    // Switch query type UI
+    window.switchQueryType = function (type) {
+      currentQueryType = type;
+      document.getElementById('bbox-query-inputs').classList.remove('active');
+      document.getElementById('attr-query-inputs').classList.remove('active');
+
+      if (type === 'bbox') {
+        document.getElementById('bbox-query-inputs').classList.add('active');
+      } else if (type === 'attr') {
+        document.getElementById('attr-query-inputs').classList.add('active');
+      }
+    };
+
+    // Clear output
+    window.clearOutput = function () {
+      document.getElementById('output').innerHTML = 'Output cleared. Ready for next query.';
+    };
+
+    // Main function to load FCB data
+    window.loadFcbData = async function () {
+      const output = document.getElementById('output');
+      const btn = document.getElementById('loadBtn');
+
+      try {
+        btn.disabled = true;
+        output.innerHTML = 'Starting query execution...\n';
+
+        // Initialize the WASM module (only once)
+        if (!wasmInitialized) {
+          output.innerHTML += 'Initializing WASM module...\n';
+          await init();
+          wasmInitialized = true;
+          output.innerHTML += '<span class="success">✓ WASM module initialized</span>\n\n';
+        }
+
+        // Create an HTTP FlatCityBuf reader
+        output.innerHTML += 'Creating HTTP reader...\n';
+        const reader = await new HttpFcbReader("https://storage.googleapis.com/flatcitybuf/3dbag_subset_all_index.fcb");
+        output.innerHTML += '<span class="success">✓ Reader created</span>\n\n';
+
+        // Get CityJSON metadata
+        output.innerHTML += 'Fetching CityJSON metadata...\n';
+        const metadata = await reader.cityjson();
+        output.innerHTML += '<span class="success">✓ Metadata loaded</span>\n';
+        output.innerHTML += `Version: ${metadata.version}\n`;
+        if (metadata.transform) {
+          output.innerHTML += `Transform: ${JSON.stringify(metadata.transform, null, 2)}\n`;
+        }
+        output.innerHTML += '\n';
+
+        // Execute query based on selected type
+        let iter;
+        if (currentQueryType === 'all') {
+          output.innerHTML += '<span class="info">Query Type: SELECT ALL</span>\n';
+          iter = await reader.select_all();
+        } else if (currentQueryType === 'bbox') {
+          const minX = parseFloat(document.getElementById('min-x-input').value);
+          const minY = parseFloat(document.getElementById('min-y-input').value);
+          const maxX = parseFloat(document.getElementById('max-x-input').value);
+          const maxY = parseFloat(document.getElementById('max-y-input').value);
+
+          if (isNaN(minX) || isNaN(minY) || isNaN(maxX) || isNaN(maxY)) {
+            output.innerHTML += '<span class="error">Error: Invalid bbox coordinates. Please enter valid numbers.</span>\n';
+            return;
+          }
+
+          output.innerHTML += '<span class="info">Query Type: BOUNDING BOX</span>\n';
+          output.innerHTML += `BBox: [${minX}, ${minY}, ${maxX}, ${maxY}]\n\n`;
+
+          const queryObject = {
+            type: 'bbox',
+            minX: minX,
+            minY: minY,
+            maxX: maxX,
+            maxY: maxY
+          };
+
+          const spatialQuery = new WasmSpatialQuery(queryObject);
+          iter = await reader.select_spatial(spatialQuery);
+        } else if (currentQueryType === 'attr') {
+          const queryInput = document.getElementById('query-input');
+          const queryStr = queryInput.value.trim();
+
+          let queryArray;
+          try {
+            queryArray = JSON.parse(queryStr);
+          } catch (e) {
+            output.innerHTML += `<span class="error">Error: Invalid JSON for query: ${e.message}</span>\n`;
+            return;
+          }
+
+          output.innerHTML += '<span class="info">Query Type: ATTRIBUTE QUERY</span>\n';
+          output.innerHTML += `Query: ${JSON.stringify(queryArray, null, 2)}\n\n`;
+
+          const attrQuery = new WasmAttrQuery(queryArray);
+          iter = await reader.select_attr_query(attrQuery);
+        }
+
+        const count = iter.features_count();
+        output.innerHTML += `<span class="success">✓ Found ${count !== undefined ? count : 'unknown number of'} features</span>\n\n`;
+
+        // Process features
+        output.innerHTML += '=== Features ===\n';
+        let featureNum = 0;
+        let feature;
+
+        while ((feature = await iter.next()) !== undefined) {
+          featureNum++;
+          output.innerHTML += `\n--- Feature ${featureNum} ---\n`;
+          output.innerHTML += `ID: ${feature.id || 'N/A'}\n`;
+          output.innerHTML += `Type: ${feature.type || 'N/A'}\n`;
+
+          if (feature.city_objects) {
+            const coCount = Object.keys(feature.city_objects).length;
+            output.innerHTML += `City objects: ${coCount} object(s)\n`;
+            // Show first few object IDs
+            const firstObjs = Object.keys(feature.city_objects).slice(0, 3);
+            if (firstObjs.length > 0) {
+              output.innerHTML += `  Sample IDs: ${firstObjs.join(', ')}\n`;
+            }
+          }
+
+          if (feature.vertices) {
+            output.innerHTML += `Vertices: ${feature.vertices.length} vertices\n`;
+          }
+
+          if (feature.attributes) {
+            output.innerHTML += `Attributes: ${JSON.stringify(feature.attributes, null, 2)}\n`;
+          }
+
+          // Limit output to first 10 features to avoid overwhelming the page
+          if (featureNum >= 10) {
+            output.innerHTML += `\n<span class="info">... (showing first 10 of ${count !== undefined ? count : 'many'} features)</span>\n`;
+            break;
+          }
+
+          // Auto-scroll to bottom
+          output.scrollTop = output.scrollHeight;
+        }
+
+        if (featureNum === 0) {
+          output.innerHTML += '\n<span class="info">No features found matching the query.</span>\n';
+        }
+
+        output.innerHTML += '\n<span class="success">✓ Query Complete!</span>\n';
+
+      } catch (error) {
+        output.innerHTML += `\n<span class="error">✗ Error: ${error.message}</span>\n`;
+        output.innerHTML += `\nStack trace:\n${error.stack}\n`;
+        console.error('Error details:', error);
+      } finally {
+        btn.disabled = false;
+        output.scrollTop = output.scrollHeight;
+      }
+    };
+  </script>
+</body>
+
+</html>
