@@ -2,7 +2,7 @@
 layout: page
 title: Using FlatCityBuf
 parent: Tutorials
-nav_order: 6
+nav_order: 5
 permalink: /tutorials/flatcitybuf/
 ---
 

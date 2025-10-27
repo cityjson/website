@@ -2,11 +2,12 @@
 layout: page
 title: Upgrading a file from v1.0 to v1.1
 parent: Tutorials
-nav_order: 5
+nav_order: 6
 permalink: /tutorials/upgrade11/
 ---
 
 ## Table of contents
+
 {: .no_toc .text-delta }
 
 1. TOC
@@ -14,11 +15,12 @@ permalink: /tutorials/upgrade11/
 
 ---
 
-## Upgrading a file -> cjio 
+## Upgrading a file -> cjio
 
 Your CityJSON v1.0 files can be *automatically* upgraded to v1.1 with [cjio](https://github.com/cityjson/cjio).
 
 First install or upgrade cjio:
+
 ```
 pip install -U cjio
 ```
@@ -26,12 +28,12 @@ pip install -U cjio
 After the installation, you have a small program called `cjio` (with version >=0.7).
 
 To upgrade your file `myfile.json`:
+
 ```
 cjio myfile.json upgrade save myfile_v11.city.json
 ```
 
 which will save a new file `myfile_v11.city.json`.
-
 
 ## If your file had Extensions
 
@@ -42,23 +44,24 @@ If your input files had Extensions, then these need to be updating manually.
 3. if you reused objects from the CityJSON schemas, then in v1.1 we assume that the Extension is in the "same folder" as those of CityJSON and the `../` must be removed
 
 This is the old way:
+
 ```javascript
 "+NoiseCityFurnitureSegment": {
   "allOf": [
     { "$ref": "../cityobjects.json#/_AbstractCityObject"},
     {
-      "properties": { 
+      "properties": {
 ```
 
 This is the new way in v1.1:
+
 ```javascript
 "+NoiseCityFurnitureSegment": {
   "allOf": [
     { "$ref": "cityobjects.json#/_AbstractCityObject"},
     {
-      "properties": { 
+      "properties": {
 ```
-
 
 ## Make your file publicly accessible
 
@@ -77,4 +80,3 @@ You can put them on a repository in GitHub and link to the file directly, eg:
 ## Validation of your Extension
 
 The new validator of CityJSON is [cjval](https://validator.cityjson.org), and it validates files with Extensions, see the [tutorial]({{ '/tutorials/validation/' | prepend: site.baseurl }}).
-
