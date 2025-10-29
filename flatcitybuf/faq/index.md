@@ -17,6 +17,57 @@ permalink: /flatcitybuf/faq/
 
 ---
 
+## How do I choose between CityJSON and FlatCityBuf?
+
+Use **CityJSON/CityJSONSeq** when:
+
+- Files are small (<1GB)
+- Human readability is important
+- Frequent editing is needed
+- Maximum tool compatibility is required
+
+Use **FlatCityBuf** when:
+
+- Files are large (>1GB)
+- Read performance is critical
+- Spatial/attribute queries are needed
+- Cloud/HTTP access is required
+
+## Can I edit FCB files directly?
+
+No, FCB files are binary and not designed for direct editing. To modify data:
+
+1. Convert FCB back to CityJSONSeq: `fcb deser -i data.fcb -o data.city.jsonl`
+2. Edit the CityJSONSeq file
+3. Convert back to FCB: `fcb ser -i data.city.jsonl -o data.fcb`
+
+## How do I update a single feature?
+
+FCB files are immutable. To update features, you must regenerate the entire file. For frequently updated data, consider:
+
+- Keeping source data in CityJSONSeq format
+- Regenerating FCB files periodically
+- Using FCB for read-heavy, write-light scenarios
+
+## What's the maximum file size?
+
+FlatCityBuf has been tested with files up to 70GB (complete 3DBAG dataset). Theoretical limits are much higher, constrained mainly by:
+
+- Available disk space
+- Memory for index construction during writing
+- HTTP server capabilities for remote access
+
+## Can I use FCB with other GIS tools?
+
+Currently, FCB is primarily used with its own libraries.
+
+
+
+## Does FlatCityBuf support textures and appearances?
+
+Yes, FlatCityBuf preserves all CityJSON data including textures and appearances.
+
+
 ## Indexing tips
 
 ### Branching factor considerations for attribute indexing
@@ -111,52 +162,3 @@ while let Some(feature_buf) = reader.next()? {
 }
 ```
 {% endraw %}
-
-
-## Can I edit FCB files directly?
-
-No, FCB files are binary and not designed for direct editing. To modify data:
-
-1. Convert FCB back to CityJSONSeq: `fcb deser -i data.fcb -o data.city.jsonl`
-2. Edit the CityJSONSeq file
-3. Convert back to FCB: `fcb ser -i data.city.jsonl -o data.fcb`
-
-## How do I update a single feature?
-
-FCB files are immutable. To update features, you must regenerate the entire file. For frequently updated data, consider:
-
-- Keeping source data in CityJSONSeq format
-- Regenerating FCB files periodically
-- Using FCB for read-heavy, write-light scenarios
-
-## What's the maximum file size?
-
-FlatCityBuf has been tested with files up to 70GB (complete 3DBAG dataset). Theoretical limits are much higher, constrained mainly by:
-
-- Available disk space
-- Memory for index construction during writing
-- HTTP server capabilities for remote access
-
-## Can I use FCB with other GIS tools?
-
-Currently, FCB is primarily used with its own libraries.
-
-## How do I choose between CityJSON and FlatCityBuf?
-
-Use **CityJSON/CityJSONSeq** when:
-
-- Files are small (<1GB)
-- Human readability is important
-- Frequent editing is needed
-- Maximum tool compatibility is required
-
-Use **FlatCityBuf** when:
-
-- Files are large (>1GB)
-- Read performance is critical
-- Spatial/attribute queries are needed
-- Cloud/HTTP access is required
-
-## Does FlatCityBuf support textures and appearances?
-
-Yes, FlatCityBuf preserves all CityJSON data including textures and appearances.

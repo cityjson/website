@@ -10,11 +10,12 @@ permalink: /flatcitybuf/python/
 # Using FlatCityBuf with Python
 
 ## Table of contents
-
 {: .no_toc .text-delta }
 
 1. TOC
 {:toc}
+
+---
 
 The Python bindings provide a convenient interface for reading and querying FlatCityBuf files.
 

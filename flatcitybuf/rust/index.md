@@ -9,6 +9,15 @@ permalink: /flatcitybuf/rust/
 
 # Using FlatCityBuf with Rust
 
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
+
 For maximum performance and control, you can use FlatCityBuf directly in Rust applications.
 
 ## Adding to your project
