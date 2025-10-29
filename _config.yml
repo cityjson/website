@@ -1,4 +1,3 @@
-
 title: CityJSON
 description: JSON-based encoding for 3D city models
 theme: just-the-docs
@@ -9,15 +8,29 @@ url: "https://www.cityjson.org" # the base hostname & protocol for your site, e.
 
 lastversion: "2.0.1"
 
-
-future:    true
+future: true
 
 permalink: pretty
-exclude: ["node_modules/", "*.gemspec", "*.gem", "Gemfile", "Gemfile.lock", "package.json", "package-lock.json",  "script/", "LICENSE.txt", "lib/", "bin/", "README.md", "Rakefile"]
+exclude:
+  [
+    "node_modules/",
+    "*.gemspec",
+    "*.gem",
+    "Gemfile",
+    "Gemfile.lock",
+    "package.json",
+    "package-lock.json",
+    "script/",
+    "LICENSE.txt",
+    "lib/",
+    "bin/",
+    "README.md",
+    "Rakefile",
+  ]
 
 plugins:
   - jekyll-seo-tag
-  
+
 # Enable or disable the site search
 search_enabled: true
 
@@ -25,8 +38,8 @@ enable_copy_code_button: true
 
 # Aux links for the upper right navigation
 # aux_links:
-  # "GitHub repository":
-    # - "//github.com/tudelft3d/cityjson"
+# "GitHub repository":
+# - "//github.com/tudelft3d/cityjson"
 
 callouts:
   warning:
@@ -34,15 +47,15 @@ callouts:
     color: red
   info:
     title: Information
-    color: grey-dk  
+    color: grey-dk
   highlight:
-    color: yellow 
+    color: yellow
 
 # heading_anchors: true
 
 kramdown:
-  hard_wrap:      false
-  toc_levels:     2..4
+  hard_wrap: false
+  toc_levels: 2..2
 
 gh_edit_link: true # show or hide edit this page link
 gh_edit_link_text: "(edit this page on GitHub)"
