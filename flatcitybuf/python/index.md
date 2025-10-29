@@ -10,6 +10,7 @@ permalink: /flatcitybuf/python/
 # Using FlatCityBuf with Python
 
 ## Table of contents
+
 {: .no_toc .text-delta }
 
 1. TOC
@@ -213,10 +214,7 @@ Now you'll see the most powerful part of FlatCityBuf: retrieving data from a hug
 
 For remote FCB files, use the async reader:
 
-<details>
-<summary>Click to show example: Query a huge FlatCityBuf over HTTP in Python (async, streaming)</summary>
-
-{% raw %}
+Query a huge FlatCityBuf over HTTP in Python (async, streaming)
 
 ```python
 import asyncio
@@ -276,14 +274,8 @@ if __name__ == "__main__":
     asyncio.run(read_remote_fcb())
 ```
 
-{% endraw %}
-
-</details>
-
-{% raw %}
-
 ```shell
-python main.py
+$ python3 main.py
 # This will show like this in milliseconds!
 # Remote file has 10771547 features
 # CityJSON version: 2.0
@@ -294,7 +286,5 @@ python main.py
 # Found 1 features with specific ID
 #   Found feature: NL.IMBAG.Pand.0503100000012869
 ```
-
-{% endraw %}
 
 No matter how big the file is, you can query it in milliseconds! :D
