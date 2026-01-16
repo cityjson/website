@@ -27,9 +27,14 @@ This is conceptually akin to the *Application Domain Extensions* (ADEs) in CityG
 
 ## How to create an extension?
 
-See the [Extensions specifications for v{{site.lastversion}}]({{ site.url }}{{ site.baseurl }}/specs/#extensions) for an overview of how the file should be structured.
+[![](./cjbuilder.png){:width="400px"}]({{ site.url }}{{ site.baseurl }}/extensions/builder/)
 
-This [tutorial to create a noise extension]({{ '/tutorials/extension/' | prepend: site.baseurl }}) guides you through the process, and explains how to validate the extension itself and datasets that uses the extension.
+We offer an [Extension builder]({{ site.url }}{{ site.baseurl }}/extensions/builder/) to create (simple) Extension files.
+
+For more complex files, you will need to manually build them by modifying the output of the builder.
+See the [Extensions specifications for v{{site.lastversion}}]({{ site.url }}{{ site.baseurl }}/specs/#extensions) for an overview of how the file should be structured and the possibilities.
+
+Also, this [tutorial to create a noise extension]({{ '/tutorials/extension/' | prepend: site.baseurl }}) guides you through the process, and explains how to validate the extension itself and datasets that uses the extension.
 
 As a template/example, you can have a look at an [Extension for CityJSON v2.0 having `+GenericCityObect` with a new semantic surface]({{ '/extensions/download/v20/generic.ext.json' | prepend: site.baseurl }}).
 

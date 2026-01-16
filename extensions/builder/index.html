@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CityJSON Extension Builder</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          sans-serif;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+        color: #333;
+      }
+
+      h1 {
+        color: #2c3e50;
+        border-bottom: none;
+        padding-bottom: 0;
+        margin: 0;
+      }
+
+      .logo-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border-bottom: 3px solid #6449d6;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+      }
+
+      .logo-header img {
+        height: 50px;
+      }
+
+      h2 {
+        color: #34495e;
+        margin-top: 30px;
+      }
+
+      .section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .section-header input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+      }
+
+      .section-header label {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #2c3e50;
+        cursor: pointer;
+      }
+
+      .section-content {
+        display: none;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+      }
+
+      .section-content.active {
+        display: block;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #555;
+      }
+
+      input[type="text"],
+      input[type="url"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        margin-bottom: 15px;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #6449d6;
+        box-shadow: 0 0 0 2px rgba(100, 73, 214, 0.2);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      .item-list {
+        border: 1px solid #eee;
+        border-radius: 4px;
+        margin-bottom: 15px;
+      }
+
+      .item {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        background: #fafafa;
+      }
+
+      .item:last-child {
+        border-bottom: none;
+      }
+
+      .item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .item-title {
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+
+      .btn-primary {
+        background: #6449d6;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #5339c6;
+      }
+
+      .btn-success {
+        background: #27ae60;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #219a52;
+      }
+
+      .btn-danger {
+        background: #e74c3c;
+        color: white;
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+
+      .btn-danger:hover {
+        background: #c0392b;
+      }
+
+      .btn-secondary {
+        background: #95a5a6;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #7f8c8d;
+      }
+
+      .property-row {
+        display: grid;
+        grid-template-columns: 1fr 150px auto;
+        gap: 10px;
+        align-items: end;
+        margin-bottom: 10px;
+      }
+
+      .property-row input,
+      .property-row select {
+        margin-bottom: 0;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+      }
+
+      #preview {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 13px;
+        white-space: pre;
+        max-height: 500px;
+        overflow-y: auto;
+      }
+
+      .help-text {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-top: -10px;
+        margin-bottom: 15px;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        background: #6449d6;
+        color: white;
+        border-radius: 4px;
+        font-size: 11px;
+        margin-left: 10px;
+      }
+
+      .inheritance-select {
+        margin-bottom: 15px;
+      }
+
+      .attr-cityobject-select {
+        margin-bottom: 10px;
+      }
+
+      .object-properties-editor {
+        display: none;
+        margin-top: 10px;
+        margin-left: 20px;
+        padding: 10px;
+        border-left: 3px solid #6449d6;
+        background: #f9f9ff;
+      }
+
+      .object-properties-editor.active {
+        display: block;
+      }
+
+      .object-properties-editor .object-prop-row {
+        display: grid;
+        grid-template-columns: 1fr 150px auto;
+        gap: 10px;
+        align-items: end;
+        margin-bottom: 8px;
+      }
+
+      .object-properties-editor .object-prop-row input,
+      .object-properties-editor .object-prop-row select {
+        margin-bottom: 0;
+      }
+
+      .object-properties-editor label {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .object-properties-editor .btn-add-obj-prop {
+        margin-top: 5px;
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo-header">
+      <img
+        src="https://www.cityjson.org/assets/images/cityjson_logo.svg"
+        alt="CityJSON Logo"
+      />
+      <h1>Extension Builder</h1>
+    </div>
+    <p>
+      Create CityJSON Extension files for CityJSON 2.0, not all cases are
+      supported but it's a good starting point.
+    </p>
+
+    <div class="section">
+      <h2>Extension Metadata</h2>
+      <div class="form-row">
+        <div>
+          <label for="ext-name">Extension Name</label>
+          <input
+            type="text"
+            id="ext-name"
+            placeholder="e.g., Noise, Energy, Potato"
+            value="MyExtension"
+          />
+        </div>
+        <div>
+          <label for="ext-version">Version</label>
+          <input
+            type="text"
+            id="ext-version"
+            placeholder="e.g., 1.0"
+            value="1.0"
+          />
+        </div>
+      </div>
+      <div>
+        <label for="ext-uri">URI (where the extension will be hosted)</label>
+        <input
+          type="url"
+          id="ext-uri"
+          placeholder="https://example.org/extensions/myext.ext.json"
+        />
+      </div>
+      <div>
+        <label for="ext-description">Description</label>
+        <textarea
+          id="ext-description"
+          rows="2"
+          placeholder="Describe what this extension is for..."
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <input type="checkbox" id="enable-root-props" />
+        <label for="enable-root-props">Extra Root Properties</label>
+        <span class="badge">Case 1</span>
+      </div>
+      <p class="help-text">
+        Add new properties at the root level of a CityJSON file. Names must
+        start with "+".
+      </p>
+      <div class="section-content" id="root-props-content">
+        <div id="root-props-list" class="item-list"></div>
+        <button class="btn btn-secondary" onclick="addRootProperty()">
+          + Add Root Property
+        </button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <input type="checkbox" id="enable-extra-attrs" />
+        <label for="enable-extra-attrs">Extra Attributes for CityObjects</label>
+        <span class="badge">Case 2</span>
+      </div>
+      <p class="help-text">
+        Add extra attributes to existing CityObject types (Building, Road,
+        etc.). Attribute names must start with "+".
+      </p>
+      <div class="section-content" id="extra-attrs-content">
+        <div id="extra-attrs-list" class="item-list"></div>
+        <button class="btn btn-secondary" onclick="addExtraAttribute()">
+          + Add Attributes to CityObject
+        </button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <input type="checkbox" id="enable-semantic-surfaces" />
+        <label for="enable-semantic-surfaces">Extra Semantic Surfaces</label>
+        <span class="badge">Case 3</span>
+      </div>
+      <p class="help-text">
+        Define new semantic surface types (like RoofSurface, WallSurface). Names
+        must start with "+".
+      </p>
+      <div class="section-content" id="semantic-surfaces-content">
+        <div id="semantic-surfaces-list" class="item-list"></div>
+        <button class="btn btn-secondary" onclick="addSemanticSurface()">
+          + Add Semantic Surface
+        </button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <input type="checkbox" id="enable-city-objects" />
+        <label for="enable-city-objects">Extra CityObjects</label>
+        <span class="badge">Case 4</span>
+      </div>
+      <p class="help-text">
+        Define entirely new CityObject types. Names must start with "+".
+      </p>
+      <div class="section-content" id="city-objects-content">
+        <div id="city-objects-list" class="item-list"></div>
+        <button class="btn btn-secondary" onclick="addCityObject()">
+          + Add CityObject
+        </button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="generatePreview()">
+        Preview JSON
+      </button>
+      <button class="btn btn-success" onclick="downloadExtension()">
+        Download Extension
+      </button>
+    </div>
+
+    <h2>Preview</h2>
+    <div id="preview">
+      Click "Preview JSON" to see the generated Extension file.
+    </div>
+
+    <script>
+      const CITYJSON_SCHEMA_BASE =
+        "https://3d.bk.tudelft.nl/schemas/cityjson/2.0.1/";
+
+      const CITY_OBJECT_TYPES = [
+        "Building",
+        "BuildingPart",
+        "BuildingUnit",
+        "BuildingStorey",
+        "BuildingRoom",
+        "BuildingInstallation",
+        "BuildingConstructiveElement",
+        "BuildingFurniture",
+        "Bridge",
+        "BridgePart",
+        "BridgeRoom",
+        "BridgeInstallation",
+        "BridgeConstructiveElement",
+        "BridgeFurniture",
+        "Tunnel",
+        "TunnelPart",
+        "TunnelHollowSpace",
+        "TunnelInstallation",
+        "TunnelConstructiveElement",
+        "TunnelFurniture",
+        "Road",
+        "Railway",
+        "TransportSquare",
+        "Waterway",
+        "WaterBody",
+        "PlantCover",
+        "SolitaryVegetationObject",
+        "LandUse",
+        "TINRelief",
+        "OtherConstruction",
+        "CityObjectGroup",
+        "CityFurniture",
+        "GenericCityObject",
+      ];
+
+      const ABSTRACT_TYPES = [
+        {
+          value: "_AbstractCityObject",
+          label: "_AbstractCityObject (base - no geometry restrictions)",
+        },
+        {
+          value: "_AbstractBuilding",
+          label: "_AbstractBuilding (MultiSurface, Solid, CompositeSolid)",
+        },
+        {
+          value: "_AbstractBridge",
+          label: "_AbstractBridge (MultiSurface, Solid, CompositeSolid)",
+        },
+        {
+          value: "_AbstractTunnel",
+          label: "_AbstractTunnel (MultiSurface, Solid, CompositeSolid)",
+        },
+        {
+          value: "_AbstractTransportationComplex",
+          label:
+            "_AbstractTransportationComplex (MultiLineString, MultiSurface)",
+        },
+      ];
+
+      const GEOMETRY_TYPES = [
+        "MultiPoint",
+        "MultiLineString",
+        "MultiSurface",
+        "CompositeSurface",
+        "Solid",
+        "MultiSolid",
+        "CompositeSolid",
+        "GeometryInstance",
+      ];
+
+      const JSON_TYPES = [
+        { value: "string", label: "string" },
+        { value: "integer", label: "integer" },
+        { value: "number", label: "number" },
+        { value: "boolean", label: "boolean" },
+        { value: "array-string", label: "array of strings" },
+        { value: "array-integer", label: "array of integers" },
+        { value: "array-number", label: "array of numbers" },
+        { value: "object", label: "object" },
+      ];
+
+      // Types allowed inside an object (no nested objects)
+      const OBJECT_PROPERTY_TYPES = [
+        { value: "string", label: "string" },
+        { value: "integer", label: "integer" },
+        { value: "number", label: "number" },
+        { value: "boolean", label: "boolean" },
+        { value: "array-string", label: "array of strings" },
+        { value: "array-integer", label: "array of integers" },
+        { value: "array-number", label: "array of numbers" },
+      ];
+
+      let rootPropsCounter = 0;
+      let extraAttrsCounter = 0;
+      let semanticSurfacesCounter = 0;
+      let cityObjectsCounter = 0;
+
+      // Toggle section visibility
+      document
+        .querySelectorAll('.section-header input[type="checkbox"]')
+        .forEach((checkbox) => {
+          checkbox.addEventListener("change", function () {
+            const content =
+              this.closest(".section").querySelector(".section-content");
+            content.classList.toggle("active", this.checked);
+          });
+        });
+
+      let objectPropCounters = {};
+
+      function createObjectPropertyRow(parentId, propId) {
+        return `
+        <div class="object-prop-row" id="obj-prop-${parentId}-${propId}">
+          <div>
+            <input type="text" placeholder="propertyName" class="obj-prop-name">
+          </div>
+          <div>
+            <select class="obj-prop-type">
+              ${OBJECT_PROPERTY_TYPES.map((t) => `<option value="${t.value}">${t.label}</option>`).join("")}
+            </select>
+          </div>
+          <button class="btn btn-danger" onclick="this.closest('.object-prop-row').remove()">Remove</button>
+        </div>
+      `;
+      }
+
+      function addObjectProperty(parentId) {
+        if (!objectPropCounters[parentId]) objectPropCounters[parentId] = 0;
+        const propId = ++objectPropCounters[parentId];
+        document
+          .getElementById(`obj-props-${parentId}`)
+          .insertAdjacentHTML(
+            "beforeend",
+            createObjectPropertyRow(parentId, propId),
+          );
+      }
+
+      function handleTypeChange(selectEl, propId) {
+        const editor = document.getElementById(`obj-editor-${propId}`);
+        if (selectEl.value === "object") {
+          editor.classList.add("active");
+          // Add initial property row if empty
+          const propsContainer = document.getElementById(`obj-props-${propId}`);
+          if (propsContainer.children.length === 0) {
+            addObjectProperty(propId);
+          }
+        } else {
+          editor.classList.remove("active");
+        }
+      }
+
+      function createPropertyRow(id, namePrefix = "") {
+        return `
+        <div class="property-row" id="prop-${id}">
+          <div>
+            <input type="text" placeholder="+propertyName" class="prop-name" value="${namePrefix}">
+          </div>
+          <div>
+            <select class="prop-type" onchange="handleTypeChange(this, '${id}')">
+              ${JSON_TYPES.map((t) => `<option value="${t.value}">${t.label}</option>`).join("")}
+            </select>
+          </div>
+          <button class="btn btn-danger" onclick="this.closest('.property-row').remove()">Remove</button>
+        </div>
+        <div class="object-properties-editor" id="obj-editor-${id}">
+          <label>Object Properties:</label>
+          <div class="obj-props-list" id="obj-props-${id}"></div>
+          <button class="btn btn-secondary btn-add-obj-prop" onclick="addObjectProperty('${id}')">+ Add Property</button>
+        </div>
+      `;
+      }
+
+      function addRootProperty() {
+        const id = ++rootPropsCounter;
+        const propId = `root-${id}`;
+        const html = `
+        <div class="item" id="root-prop-${id}">
+          <div class="item-header">
+            <span class="item-title">Root Property</span>
+            <button class="btn btn-danger" onclick="document.getElementById('root-prop-${id}').remove()">Remove</button>
+          </div>
+          <div class="form-row">
+            <div>
+              <label>Property Name (must start with +)</label>
+              <input type="text" class="root-prop-name" placeholder="+myProperty">
+            </div>
+            <div>
+              <label>Type</label>
+              <select class="root-prop-type" onchange="handleTypeChange(this, '${propId}')">
+                ${JSON_TYPES.map((t) => `<option value="${t.value}">${t.label}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+          <div class="object-properties-editor" id="obj-editor-${propId}">
+            <label>Object Properties:</label>
+            <div class="obj-props-list" id="obj-props-${propId}"></div>
+            <button class="btn btn-secondary btn-add-obj-prop" onclick="addObjectProperty('${propId}')">+ Add Property</button>
+          </div>
+          <label>Description</label>
+          <input type="text" class="root-prop-desc" placeholder="Description of this property">
+        </div>
+      `;
+        document
+          .getElementById("root-props-list")
+          .insertAdjacentHTML("beforeend", html);
+      }
+
+      function addExtraAttribute() {
+        const id = ++extraAttrsCounter;
+        const html = `
+        <div class="item" id="extra-attr-${id}">
+          <div class="item-header">
+            <span class="item-title">Extra Attributes</span>
+            <button class="btn btn-danger" onclick="document.getElementById('extra-attr-${id}').remove()">Remove</button>
+          </div>
+          <div class="attr-cityobject-select">
+            <label>Target CityObject Type</label>
+            <select class="attr-target">
+              ${CITY_OBJECT_TYPES.map((t) => `<option value="${t}">${t}</option>`).join("")}
+            </select>
+          </div>
+          <label>Attributes (name must start with +)</label>
+          <div class="attr-properties" id="attr-props-${id}">
+            ${createPropertyRow(`attr-${id}-1`, "+")}
+          </div>
+          <button class="btn btn-secondary" onclick="addAttrProperty(${id})">+ Add Attribute</button>
+        </div>
+      `;
+        document
+          .getElementById("extra-attrs-list")
+          .insertAdjacentHTML("beforeend", html);
+      }
+
+      let attrPropCounters = {};
+      function addAttrProperty(attrId) {
+        if (!attrPropCounters[attrId]) attrPropCounters[attrId] = 1;
+        const propId = ++attrPropCounters[attrId];
+        document
+          .getElementById(`attr-props-${attrId}`)
+          .insertAdjacentHTML(
+            "beforeend",
+            createPropertyRow(`attr-${attrId}-${propId}`, "+"),
+          );
+      }
+
+      function addSemanticSurface() {
+        const id = ++semanticSurfacesCounter;
+        const html = `
+        <div class="item" id="semantic-surface-${id}">
+          <div class="item-header">
+            <span class="item-title">Semantic Surface</span>
+            <button class="btn btn-danger" onclick="document.getElementById('semantic-surface-${id}').remove()">Remove</button>
+          </div>
+          <div class="form-row">
+            <div>
+              <label>Surface Type Name (must start with +)</label>
+              <input type="text" class="surface-name" placeholder="+MySurface">
+            </div>
+          </div>
+          <label>Properties (optional)</label>
+          <div class="surface-properties" id="surface-props-${id}"></div>
+          <button class="btn btn-secondary" onclick="addSurfaceProperty(${id})">+ Add Property</button>
+        </div>
+      `;
+        document
+          .getElementById("semantic-surfaces-list")
+          .insertAdjacentHTML("beforeend", html);
+      }
+
+      let surfacePropCounters = {};
+      function addSurfaceProperty(surfaceId) {
+        if (!surfacePropCounters[surfaceId]) surfacePropCounters[surfaceId] = 0;
+        const propId = ++surfacePropCounters[surfaceId];
+        document
+          .getElementById(`surface-props-${surfaceId}`)
+          .insertAdjacentHTML(
+            "beforeend",
+            createPropertyRow(`surface-${surfaceId}-${propId}`),
+          );
+      }
+
+      function addCityObject() {
+        const id = ++cityObjectsCounter;
+        const html = `
+        <div class="item" id="city-object-${id}">
+          <div class="item-header">
+            <span class="item-title">New CityObject</span>
+            <button class="btn btn-danger" onclick="document.getElementById('city-object-${id}').remove()">Remove</button>
+          </div>
+          <div class="form-row">
+            <div>
+              <label>CityObject Name (must start with +)</label>
+              <input type="text" class="co-name" placeholder="+MyCityObject">
+            </div>
+            <div>
+              <label>Inherits From</label>
+              <select class="co-parent">
+                ${ABSTRACT_TYPES.map((t) => `<option value="${t.value}">${t.label}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+          <label>Allowed Geometry Types</label>
+          <div class="co-geometries" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 15px;">
+            ${GEOMETRY_TYPES.map(
+              (g) => `
+              <label style="display: flex; align-items: center; gap: 5px; font-weight: normal;">
+                <input type="checkbox" value="${g}" ${["MultiSurface", "Solid"].includes(g) ? "checked" : ""}> ${g}
+              </label>
+            `,
+            ).join("")}
+          </div>
+          <label>Attributes (optional)</label>
+          <div class="co-properties" id="co-props-${id}"></div>
+          <button class="btn btn-secondary" onclick="addCOProperty(${id})">+ Add Attribute</button>
+        </div>
+      `;
+        document
+          .getElementById("city-objects-list")
+          .insertAdjacentHTML("beforeend", html);
+      }
+
+      let coPropCounters = {};
+      function addCOProperty(coId) {
+        if (!coPropCounters[coId]) coPropCounters[coId] = 0;
+        const propId = ++coPropCounters[coId];
+        document
+          .getElementById(`co-props-${coId}`)
+          .insertAdjacentHTML(
+            "beforeend",
+            createPropertyRow(`co-${coId}-${propId}`),
+          );
+      }
+
+      function getBasicTypeSchema(typeValue) {
+        switch (typeValue) {
+          case "string":
+            return { type: "string" };
+          case "integer":
+            return { type: "integer" };
+          case "number":
+            return { type: "number" };
+          case "boolean":
+            return { type: "boolean" };
+          case "array-string":
+            return { type: "array", items: { type: "string" } };
+          case "array-integer":
+            return { type: "array", items: { type: "integer" } };
+          case "array-number":
+            return { type: "array", items: { type: "number" } };
+          default:
+            return { type: "string" };
+        }
+      }
+
+      function getTypeSchema(typeValue, propertyRowId = null) {
+        if (typeValue !== "object") {
+          return getBasicTypeSchema(typeValue);
+        }
+
+        // Handle object type - read properties from the sub-editor
+        const objPropsContainer = document.getElementById(
+          `obj-props-${propertyRowId}`,
+        );
+        if (!objPropsContainer) {
+          return {
+            type: "object",
+            properties: {},
+            additionalProperties: false,
+          };
+        }
+
+        const properties = {};
+        const required = [];
+
+        objPropsContainer
+          .querySelectorAll(".object-prop-row")
+          .forEach((row) => {
+            const propName = row.querySelector(".obj-prop-name").value.trim();
+            const propType = row.querySelector(".obj-prop-type").value;
+            if (propName) {
+              properties[propName] = getBasicTypeSchema(propType);
+              required.push(propName);
+            }
+          });
+
+        return {
+          type: "object",
+          properties: properties,
+          required: required.length > 0 ? required : undefined,
+          additionalProperties: false,
+        };
+      }
+
+      function ensurePlusPrefix(name) {
+        if (!name) return "";
+        return name.startsWith("+") ? name : "+" + name;
+      }
+
+      function generateExtension() {
+        const ext = {
+          type: "CityJSONExtension",
+          name: document.getElementById("ext-name").value || "MyExtension",
+          uri: document.getElementById("ext-uri").value || "",
+          version: document.getElementById("ext-version").value || "1.0",
+          versionCityJSON: "2.0",
+          description: document.getElementById("ext-description").value || "",
+        };
+
+        // Extra Root Properties
+        ext.extraRootProperties = {};
+        if (document.getElementById("enable-root-props").checked) {
+          document
+            .querySelectorAll("#root-props-list .item")
+            .forEach((item) => {
+              const name = ensurePlusPrefix(
+                item.querySelector(".root-prop-name").value,
+              );
+              if (name) {
+                const itemId = item.id.replace("root-prop-", "");
+                const propId = `root-${itemId}`;
+                ext.extraRootProperties[name] = getTypeSchema(
+                  item.querySelector(".root-prop-type").value,
+                  propId,
+                );
+              }
+            });
+        }
+
+        // Extra Attributes
+        ext.extraAttributes = {};
+        if (document.getElementById("enable-extra-attrs").checked) {
+          document
+            .querySelectorAll("#extra-attrs-list .item")
+            .forEach((item) => {
+              const target = item.querySelector(".attr-target").value;
+              if (!ext.extraAttributes[target]) {
+                ext.extraAttributes[target] = {};
+              }
+              item.querySelectorAll(".property-row").forEach((row) => {
+                const name = ensurePlusPrefix(
+                  row.querySelector(".prop-name").value,
+                );
+                if (name) {
+                  const rowId = row.id.replace("prop-", "");
+                  ext.extraAttributes[target][name] = getTypeSchema(
+                    row.querySelector(".prop-type").value,
+                    rowId,
+                  );
+                }
+              });
+            });
+        }
+
+        // Extra Semantic Surfaces
+        ext.extraSemanticSurfaces = {};
+        if (document.getElementById("enable-semantic-surfaces").checked) {
+          document
+            .querySelectorAll("#semantic-surfaces-list .item")
+            .forEach((item) => {
+              const name = ensurePlusPrefix(
+                item.querySelector(".surface-name").value,
+              );
+              if (name) {
+                const surface = {
+                  allOf: [
+                    { $ref: "geomprimitives.schema.json#/Semantics" },
+                    {
+                      properties: {
+                        type: { enum: [name] },
+                      },
+                      required: ["type"],
+                    },
+                  ],
+                };
+                // Add custom properties if any
+                const props = {};
+                item.querySelectorAll(".property-row").forEach((row) => {
+                  const propName = row.querySelector(".prop-name").value;
+                  if (propName) {
+                    const rowId = row.id.replace("prop-", "");
+                    props[propName] = getTypeSchema(
+                      row.querySelector(".prop-type").value,
+                      rowId,
+                    );
+                  }
+                });
+                if (Object.keys(props).length > 0) {
+                  surface.allOf[1].properties = {
+                    type: { enum: [name] },
+                    ...props,
+                  };
+                }
+                ext.extraSemanticSurfaces[name] = surface;
+              }
+            });
+        }
+
+        // Extra CityObjects
+        ext.extraCityObjects = {};
+        if (document.getElementById("enable-city-objects").checked) {
+          document
+            .querySelectorAll("#city-objects-list .item")
+            .forEach((item) => {
+              const name = ensurePlusPrefix(
+                item.querySelector(".co-name").value,
+              );
+              if (name) {
+                const parent = item.querySelector(".co-parent").value;
+                const geometries = [];
+                item
+                  .querySelectorAll(".co-geometries input:checked")
+                  .forEach((cb) => {
+                    geometries.push({
+                      $ref: `geomprimitives.schema.json#/${cb.value}`,
+                    });
+                  });
+
+                const coSchema = {
+                  allOf: [
+                    { $ref: `cityobjects.schema.json#/${parent}` },
+                    {
+                      properties: {
+                        type: { enum: [name] },
+                        attributes: {
+                          type: "object",
+                          properties: {},
+                        },
+                        geometry: {
+                          type: "array",
+                          items:
+                            geometries.length === 1
+                              ? geometries[0]
+                              : { oneOf: geometries },
+                        },
+                      },
+                      required: ["type"],
+                    },
+                  ],
+                };
+
+                // Add custom attributes
+                item
+                  .querySelectorAll(".co-properties .property-row")
+                  .forEach((row) => {
+                    const propName = row.querySelector(".prop-name").value;
+                    if (propName) {
+                      const rowId = row.id.replace("prop-", "");
+                      coSchema.allOf[1].properties.attributes.properties[
+                        propName
+                      ] = getTypeSchema(
+                        row.querySelector(".prop-type").value,
+                        rowId,
+                      );
+                    }
+                  });
+
+                // Remove empty attributes object
+                if (
+                  Object.keys(
+                    coSchema.allOf[1].properties.attributes.properties,
+                  ).length === 0
+                ) {
+                  delete coSchema.allOf[1].properties.attributes;
+                }
+
+                ext.extraCityObjects[name] = coSchema;
+              }
+            });
+        }
+
+        return ext;
+      }
+
+      function generatePreview() {
+        const ext = generateExtension();
+        document.getElementById("preview").textContent = JSON.stringify(
+          ext,
+          null,
+          2,
+        );
+      }
+
+      function downloadExtension() {
+        const ext = generateExtension();
+        const blob = new Blob([JSON.stringify(ext, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${ext.name.toLowerCase()}.ext.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    </script>
+  </body>
+</html>
