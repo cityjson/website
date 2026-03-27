@@ -31,7 +31,7 @@ This is conceptually akin to the *Application Domain Extensions* (ADEs) in CityG
 
 We offer an [Extension builder]({{ site.url }}{{ site.baseurl }}/extensions/builder/) to create (simple) Extension files.
 
-For more complex files, you will need to manually build them by modifying the output of the builder.
+For more complex files, you will need to manually build them by modifying the output of the builder or building from manually.
 See the [Extensions specifications for v{{site.lastversion}}]({{ site.url }}{{ site.baseurl }}/specs/#extensions) for an overview of how the file should be structured and the possibilities.
 
 Also, this [tutorial to create a noise extension]({{ '/tutorials/extension/' | prepend: site.baseurl }}) guides you through the process, and explains how to validate the extension itself and datasets that uses the extension.
@@ -40,27 +40,14 @@ As a template/example, you can have a look at an [Extension for CityJSON v2.0 ha
 
 
 
-## Registry of current Extensions
+## Registry of Extensions
 
-{% assign extensions = site.data.extensions | sort_natural: 'name' %}
+CityJSON has an official Extension registry: <https://github.com/cityjson/extensions>.
 
-{% for i in extensions %}
-<p>
-  <b>{{ i.name }}</b>
-  <br/>
-  {{ i.description | markdownify | remove: '<p>' | remove: '</p>' }} 
-  <br/>
-  {% if i.status %}
-  v{{ i.status }} |
-  {% endif %}
-  <a href="{{ i.url }}">schema</a>
-  {% if i.details %}
-  | 
-  <a href="{{ i.details }}">details</a>
-  {% endif %}
-  {% if i.organisation %}
-  | 
-  {{ i.organisation | markdownify | remove: '<p>' | remove: '</p>' }} 
-  {% endif %}
-</p>
-{% endfor %}
+Once your Extension is working, we advise you to add it to the repository so that others can 
+
+  1. get to know it exists!
+  2. learn from it when building their own Extensions
+  3. use it seamlessly by hosting it (no CORS drama)
+
+[![](./registry.png){:width="600px"}](https://github.com/cityjson/extensions)
