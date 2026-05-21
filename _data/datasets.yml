@@ -101,6 +101,6 @@
   gml:  Vienna_102081.gml
   gml-size: 58
   gml-size-wo: 40
-  textures: none
+  # textures: none
   validity: 98.5% buildings valid
   details: Buildings in LoD2  
