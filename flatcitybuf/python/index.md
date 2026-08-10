@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Python bindings
+title: Python
 parent: FlatCityBuf
-nav_order: 3
+nav_order: 6
 has_children: false
 permalink: /flatcitybuf/python/
 ---
@@ -17,9 +17,12 @@ permalink: /flatcitybuf/python/
 
 ---
 
-The Python bindings provide a convenient interface for reading and querying FlatCityBuf files.
+The `flatcitybuf` package is a **pure-Python reader**: it parses the FlatBuffers bytes itself, so there is no compiled extension, no Rust toolchain and no per-platform wheel — one `py3-none-any` wheel on CPython 3.9+, with `flatbuffers` as its only required dependency.
 
-## Installation Python bindings
+{: .warning }
+This page documents the pure-Python reader (version 0.3.0 and later). It is **not** a drop-in replacement for the older PyO3 bindings (0.2.0 and earlier) — see [Migrating from the old bindings](#migrating-from-the-old-bindings) at the bottom.
+
+## Installation
 
 {% raw %}
 
@@ -29,263 +32,235 @@ pip install flatcitybuf
 
 {% endraw %}
 
-For development or building from [source (the main FlatCityBuf repository)](https://github.com/cityjson/flatcitybuf):
+Optional, and worth it for large files: `numpy` speeds up bulk vertex and geometry decoding by roughly 2.4× (every code path has a pure-Python fallback when it is absent).
 
 {% raw %}
 
 ```bash
-pip install maturin
-cd flatcitybuf/src/rust/fcb_py
-maturin develop --features http
+pip install "flatcitybuf[numpy]"
 ```
 
 {% endraw %}
 
-## Basic reading
+Check what you got — the older `0.2.0` release is the retired PyO3 extension, whose API is different:
 
-### Opening local files
+{% raw %}
 
-You can show the metadata of a FlatCityBuf file with the following code:
+```bash
+python -c "import flatcitybuf; print(flatcitybuf.__version__)"
+```
+
+{% endraw %}
+
+If that is below `0.3.0`, install the pure-Python reader straight from the repository:
+
+{% raw %}
+
+```bash
+pip install "flatcitybuf @ git+https://github.com/cityjson/flatcitybuf#subdirectory=src/py"
+```
+
+{% endraw %}
+
+## Opening a file and reading its header
 
 {% raw %}
 
 ```python
 import flatcitybuf as fcb
 
-# Open a local FCB file
-reader = fcb.Reader("delft.fcb")
+reader = fcb.FcbReader.open_file("delft.fcb")
 
-# Get file information
-info = reader.info()
-print(f"Features: {info.feature_count}")
-print(f"Bounding box: {info.bbox}")
+info = reader.header.info
+print(f"Features: {info.features_count}")
+print(f"CityJSON version: {info.cityjson_version}")
+print(f"CRS: {info.crs}")
+print(f"Extent: {info.geographical_extent}")
+print(f"Columns: {len(info.columns)}")
 
-# Get CityJSON header with transform and metadata
-cityjson = reader.cityjson_header()
-print(f"CityJSON version: {cityjson.version}")
-print(f"Transform scale: {cityjson.transform.scale}")
-print(f"Transform translate: {cityjson.transform.translate}")
+# The CityJSONSeq metadata line (transform, metadata, geometry templates...)
+metadata = fcb.to_cityjson_metadata(reader.header)
+print(metadata["transform"])
+
+# Features: 1115
+# CityJSON version: 2.0
+# CRS: EPSG:7415
+# Extent: (84501.5546875, 445805.03125, -3.746997833251953, 85675.234375, 446983.46875, 95.04200744628906)
+# Columns: 44
+# {'scale': [0.001, 0.001, 0.001], 'translate': [85088.390625, 446394.25, 45.64800262451172]}
 ```
 
 {% endraw %}
 
-### Iterating through features
+## Iterating through features
 
-This will print the first 2 features:
+`select_all()` streams every feature in stored (Hilbert) order. `to_cityjson_feature` turns one into a plain CityJSON dict — exactly the shape the CityJSON specification describes, so `cj["CityObjects"]`, `cj["vertices"]`, `cj["appearance"]` are all there.
 
 {% raw %}
 
 ```python
-feature_count = 0
-    for feature in reader:
-        print(f"Feature {feature_count + 1}:")
-        print(f"  ID: {feature.id}")
-        print(f"  Type: {feature.type}")
-        print(f"  Vertices: {len(feature.vertices)} vertices")
-        print(f"  City Objects: {len(feature.city_objects)} objects")
+for i, feature in enumerate(reader.select_all()):
+    cj = fcb.to_cityjson_feature(feature, reader.header)
+    print(f"{cj['id']}: {len(cj['CityObjects'])} city object(s)")
 
-        # Iterate over all city objects in the feature
-        if feature.city_objects:
-            for obj_id, city_obj in feature.city_objects.items():
-                print(f"    Object ID: {obj_id}")
-                print(f"    Object type: {city_obj.type}")
-                print(f"    Geometries: {len(city_obj.geometry)}")
+    for obj_id, city_object in cj["CityObjects"].items():
+        print(f"  {obj_id} ({city_object['type']})")
+        for geometry in city_object.get("geometry", []):
+            print(f"    {geometry['type']}, LoD {geometry.get('lod')}")
 
-                # Show geometry with nested boundaries
-                if city_obj.geometry:
-                    for geom in city_obj.geometry:
-                        if geom is not None:
-                            print(f"      Geometry type: {geom.geometry_type}")
-                            print(f"      Vertices index: {geom.vertices}")
-                            print(f"      Boundaries: {geom.boundaries}")
-                            if geom.semantics:
-                                print(f"      Has semantics: {geom.semantics}")
-                        else:
-                            print("      Geometry is None")
+    if i >= 1:
+        break
 
-        feature_count += 1
-        # Limit output for demo
-        if feature_count >= 2:
-            print("  ... (showing first 2 features only)")
-            break
-# features will be printed here
+# NL.IMBAG.Pand.0503100000031902: 2 city object(s)
+#   NL.IMBAG.Pand.0503100000031902-0 (BuildingPart)
+#     MultiSurface, LoD 0
+#   ...
 ```
 
 {% endraw %}
+
+{: .info }
+Vertices are quantised integers: the real coordinate is `v[n] * transform["scale"][n] + transform["translate"][n]`, and the transform lives on the **metadata** object, not on the feature.
 
 ## Spatial queries
 
-FlatCityBuf's spatial indexing enables fast bounding box queries:
+`search_rtree` answers a bounding box from the packed R-tree. Like the attribute query below, it returns `SearchResultItem`s — byte offsets into the feature section — which `feature_at` turns into a feature. That is deliberate: you only pay for decoding the features you actually want.
 
 {% raw %}
 
 ```python
-# Query features within a bounding box
-# Format: min_x, min_y, max_x, max_y
-features = list(reader.query_bbox(84227.77, 445377.33, 85323.23, 446334.69))
-print(f"Found {len(features)} features in bounding box")
+hits = fcb.search_rtree(
+    reader.range_reader,
+    reader.header.layout.rtree_begin,
+    reader.header.info.features_count,
+    reader.header.info.index_node_size,
+    (84227.77, 445377.33, 85323.23, 446334.69),  # min_x, min_y, max_x, max_y
+)
+print(f"Found {len(hits)} features in the bounding box")
 
-# Process spatially filtered features
-for feature in features:
-    # Access only features within the specified area
-    print(f"Feature {feature.id} is within the bounding box")
+for hit in hits[:3]:
+    cj = fcb.to_cityjson_feature(reader.feature_at(hit), reader.header)
+    print(" ", cj["id"])
 
-# This will shows like this:
-# Found 101 features in bounding box
-# Feature NL.IMBAG.Pand.0503100000019446 is within the bounding box
-# ...
+# Found 101 features in the bounding box
+#   NL.IMBAG.Pand.0503100000019446
+#   ...
 ```
 
 {% endraw %}
 
 ## Attribute queries
 
-To query features based on attribute values, you must serialise the file with attribute indexing enabled.
+Attribute queries need the attribute to have been indexed when the file was written:
 
 {% raw %}
 
 ```bash
-$ fcb ser -i delft.city.jsonl -o delft.fcb -A --attr-branching-factor 16
-Successfully encoded to FCB
+$ fcb ser delft.city.jsonl delft.fcb -A --attr-branching-factor 256
 ```
 
 {% endraw %}
 
-Query features based on attribute values:
+A condition is a column name, an operator and a **typed** `KeyValue` whose type must match the column's type on disk. Multiple conditions are AND-ed.
 
 {% raw %}
 
 ```python
-# Create attribute filters
-# Format: (attribute_name, operator, value)
-
-# Exact match
-id_filter = fcb.AttrFilter(
-    "identificatie", fcb.Operator.Eq, "NL.IMBAG.Pand.0503100000019581"
-)
-
-one_building = list(reader.query_attr([id_filter]))
-print(f"Found {len(one_building)} matching buildings")
-
 # Numeric comparison
-height_filter = fcb.AttrFilter("b3_h_dak_50p", fcb.Operator.Gt, 20.0)
-buildings = list(reader.query_attr([height_filter]))
-print(f"Found {len(buildings)} matching buildings")
+tall = reader.select_attr([
+    fcb.AttrCondition("b3_h_dak_50p", fcb.Operator.GT, fcb.KeyValue.from_f64(20.0))
+])
+print(f"{len(tall)} buildings taller than 20m")
+for hit in tall:
+    print(" ", fcb.to_cityjson_feature(reader.feature_at(hit), reader.header)["id"])
 
-# Query with multiple filters (AND logic)
-tall_glass_buildings = list(
-    reader.query_attr(
-        [
-            fcb.AttrFilter("b3_h_dak_50p", fcb.Operator.Gt, 30.0),
-            fcb.AttrFilter("b3_is_glas_dak", fcb.Operator.Eq, True),
-        ]
+# Exact string match
+one = reader.select_attr([
+    fcb.AttrCondition(
+        "identificatie",
+        fcb.Operator.EQ,
+        fcb.KeyValue.from_string(fcb.KeyKind.STRING50, "NL.IMBAG.Pand.0503100000019581"),
     )
-)
+])
+print(f"{len(one)} matching building")
 
-print(f"Found {len(tall_glass_buildings)} tall glass buildings")
+# Several conditions, AND-ed
+tall_and_flat = reader.select_attr([
+    fcb.AttrCondition("b3_h_dak_50p", fcb.Operator.GT, fcb.KeyValue.from_f64(20.0)),
+    fcb.AttrCondition("b3_dak_type", fcb.Operator.EQ,
+                      fcb.KeyValue.from_string(fcb.KeyKind.STRING50, "slanted")),
+])
 
-# This will show like this:
-# Found 1 matching buildings
-# Found 4 matching buildings
-# Found 0 tall glass buildings
+# 4 buildings taller than 20m
+#   NL.IMBAG.Pand.0503100000025026
+#   NL.IMBAG.Pand.0503100000032914
+#   NL.IMBAG.Pand.0503100000025170
+#   NL.IMBAG.Pand.0503100000031390
+# 1 matching building
 ```
 
 {% endraw %}
 
-### Available operators
+Operators are `fcb.Operator.EQ`, `NE`, `GT`, `GE`, `LT`, `LE` (upper case).
 
-You can try the following operators:
+`KeyValue` constructors follow the column type: `from_f64`, `from_f32`, `from_i64`, `from_u64`, `from_i32`, `from_u32`, `from_bool`, `from_string(KeyKind.STRING50, ...)`, and so on.
 
-{% raw %}
-
-```python
-fcb.Operator.Eq    # Equal
-fcb.Operator.Ne    # Not equal
-fcb.Operator.Gt    # Greater than
-fcb.Operator.Ge    # Greater than or equal
-fcb.Operator.Lt    # Less than
-fcb.Operator.Le    # Less than or equal
-```
-
-{% endraw %}
+{: .info }
+String index keys are truncated to 50 bytes, so the index returns *candidates*; `select_attr` re-checks each one against the full attribute value before returning it. Pass `exact_index_only=True` to skip that check and take the raw candidates.
 
 ## HTTP and cloud access
 
-Now you'll see the most powerful part of FlatCityBuf: retrieving data from a huge remote file (70GB!) over HTTP.
+The same reader works on a remote file: swap the range reader. `HttpRangeReader` issues HTTP range requests with the standard library's `urllib.request` (no third-party dependency, and no `asyncio` — reads are synchronous), and `BufferedRangeReader` caches around it so index traversal does not re-fetch the same bytes.
 
-For remote FCB files, use the async reader:
-
-Query a huge FlatCityBuf over HTTP in Python (async, streaming)
+{% raw %}
 
 ```python
-import asyncio
 import flatcitybuf as fcb
 
-async def read_remote_fcb():
-    # Create async reader for HTTP URL
-    async_reader = fcb.AsyncReader(
-        "https://storage.googleapis.com/flatcitybuf/3dbag_all_index.fcb"
-    )
-    opened_reader = await async_reader.open()
+URL = "https://storage.googleapis.com/flatcitybuf/3dbag_all_index.fcb"
 
-    # Get file info
-    info = opened_reader.info()
-    print(f"Remote file has {info.feature_count} features")
+source = fcb.BufferedRangeReader(fcb.HttpRangeReader(URL))
+reader = fcb.FcbReader.open(source)
 
-    # Get CityJSON header
-    cityjson = opened_reader.cityjson_header()
-    print(f"CityJSON version: {cityjson.version}")
+info = reader.header.info
+print(f"{info.features_count} features, CRS {info.crs}")
 
-    # Async iteration - stream features one by one
-    async_iter = opened_reader.select_all()
+hits = fcb.search_rtree(
+    reader.range_reader,
+    reader.header.layout.rtree_begin,
+    info.features_count,
+    info.index_node_size,
+    (120000, 486000, 120200, 486200),
+)
+print(f"{len(hits)} features in the bbox")
 
-    count = 0
-    for _ in range(2):  # Get first 2 features
-        feature = await async_iter.next()
-        if feature is None:
-            break
-        print(f"Feature {count}: {feature.id}")
-        count += 1
+for hit in hits[:3]:
+    print(" ", fcb.to_cityjson_feature(reader.feature_at(hit), reader.header)["id"])
 
-    # Async spatial query
-    bbox_iter = opened_reader.query_bbox(84227.77, 445377.33, 85323.23, 446334.69)
-    count = 0
-    for _ in range(2):  # Get first 2 features
-        feature = await bbox_iter.next()
-        if feature is None:
-            break
-        print(f"  Spatial feature {count + 1}: {feature.id}")
-        count += 1
-
-    # Async attribute query
-    id_filter = fcb.AttrFilter(
-        "identificatie",
-        fcb.Operator.Eq,
-        "NL.IMBAG.Pand.0503100000012869",
-    )
-    attr_iter = opened_reader.query_attr([id_filter])
-    attr_features = await attr_iter.collect()
-    print(f"Found {len(attr_features)} features with specific ID")
-    if attr_features:
-        print(f"  Found feature: {attr_features[0].id}")
-
-# Run the async function
-
-if __name__ == "__main__":
-    asyncio.run(read_remote_fcb())
+# 10771547 features, CRS EPSG:7415
+# 114 features in the bbox
+#   NL.IMBAG.Pand.0363100012160936
+#   ...
 ```
 
-```shell
-$ python3 main.py
-# This will show like this in milliseconds!
-# Remote file has 10771547 features
-# CityJSON version: 2.0
-# Feature 0: NL.IMBAG.Pand.0983100000055544
-# Feature 1: NL.IMBAG.Pand.0983100000061503
-#   Spatial feature 1: NL.IMBAG.Pand.0503100000014644
-#   Spatial feature 2: NL.IMBAG.Pand.0503100000019937
-# Found 1 features with specific ID
-#   Found feature: NL.IMBAG.Pand.0503100000012869
-```
+{% endraw %}
 
-No matter how big the file is, you can query it in milliseconds! :D
+That file is ~68GB and the query never downloads more than the index nodes and the matching features.
+
+## Migrating from the old bindings
+
+Version 0.3.0 replaced the PyO3 extension with this pure-Python reader. The import name is the same, the API is not:
+
+| Old (PyO3, ≤ 0.2.0) | New (pure Python, ≥ 0.3.0) |
+| --- | --- |
+| `fcb.Reader(path)` | `fcb.FcbReader.open_file(path)` |
+| `reader.info()` | `reader.header.info` |
+| `reader.cityjson_header()` | `fcb.to_cityjson_metadata(reader.header)` |
+| `reader.query_bbox(minx, miny, maxx, maxy)` | `fcb.search_rtree(...)` + `reader.feature_at(hit)` |
+| `reader.query_attr([...])` | `reader.select_attr([...])` + `reader.feature_at(hit)` |
+| `fcb.AttrFilter(name, fcb.Operator.Eq, 20.0)` | `fcb.AttrCondition(name, fcb.Operator.EQ, fcb.KeyValue.from_f64(20.0))` |
+| `feature.city_objects`, `feature.id` (classes) | `fcb.to_cityjson_feature(feature, reader.header)` → a CityJSON dict |
+| `fcb.AsyncReader(url)`, `await reader.open()` | `fcb.FcbReader.open(fcb.HttpRangeReader(url))` — synchronous |
+| `pip install flatcitybuf` + platform wheel | one universal wheel, no compiler |
+
+The one real regression is the async API: the old bindings had `AsyncReader`/`AsyncFeatureIterator` on a tokio runtime, and the pure-Python reader deliberately has no `asyncio` story. If you need concurrent remote reads, run the synchronous reader in a thread pool — or use [Rust]({{ '/flatcitybuf/rust/' | prepend: site.baseurl }}) or [TypeScript]({{ '/flatcitybuf/typescript/' | prepend: site.baseurl }}), which are async.
