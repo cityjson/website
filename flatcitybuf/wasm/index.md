@@ -1,62 +1,16 @@
 ---
 layout: default
-title: WASM
+title: WASM (retired)
 parent: FlatCityBuf
-nav_order: 5
+nav_exclude: true
 has_children: false
 permalink: /flatcitybuf/wasm/
 ---
 
-# Using FlatCityBuf with WebAssembly
+# WebAssembly bindings (retired)
 
-## Table of contents
-{: .no_toc .text-delta }
+{: .warning }
+The WebAssembly binding has been replaced by a **pure TypeScript reader**, published under the same npm name `@cityjson/flatcitybuf`. It runs the same code in the browser and in Node.js, ships no `.wasm`, and fixes several defects the WASM binding had. This page is kept only so old links do not break.
 
-1. TOC
-{:toc}
-
----
-
-## Install for JavaScript/TypeScript (npm)
-
-{% raw %}
-```bash
-npm install @cityjson/flatcitybuf
-```
-{% endraw %}
-
-## Using FlatCityBuf in the browser (WASM)
-
-FlatCityBuf provides WebAssembly bindings for efficient CityJSON processing in web browsers.
-
-### Setup and installation
-
-Install the npm package:
-
-{% raw %}
-```bash
-npm init -y # create package.json file
-npm install @cityjson/flatcitybuf
-```
-{% endraw %}
-
-Or include it in your `package.json`:
-
-{% raw %}
-```json
-{
-  "dependencies": {
-    "@cityjson/flatcitybuf": "^0.2.0"
-  }
-}
-```
-{% endraw %}
-
-### Reading FCB files over HTTP
-
-Create a file called `index.html` and paste the following code into it. Open the HTML file in your browser and you'll see the UI like this:
-![HTML to interact with FlatCityBuf over HTTP](./fcb_demo.png)
-
-You can test it to fetch data with bounding box or attribute query.
-
-You can download the complete HTML file here: [fcb_demo.html](./fcb_demo.html)
+- **Reading FlatCityBuf in the browser or in Node.js** → [TypeScript]({{ '/flatcitybuf/typescript/' | prepend: site.baseurl }}), including a [migration table]({{ '/flatcitybuf/typescript/#migrating-from-the-wasm-binding' | prepend: site.baseurl }}) from the old WASM API.
+- **The browser demo that used to live here** → the [web viewer]({{ '/flatcitybuf/viewer/' | prepend: site.baseurl }}), which opens the full 3DBAG over HTTP and renders it with deck.gl.
