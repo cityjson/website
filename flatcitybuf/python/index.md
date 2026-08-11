@@ -24,25 +24,23 @@ This page documents the pure-Python reader (version 0.3.0 and later). It is **no
 
 ## Installation
 
-{% raw %}
-
-```bash
-pip install flatcitybuf
-```
-
-{% endraw %}
-
-Optional, and worth it for large files: `numpy` speeds up bulk vertex and geometry decoding by roughly 2.4× (every code path has a pure-Python fallback when it is absent).
+{: .warning }
+PyPI currently serves only `flatcitybuf` 0.1.2 and 0.2.0, and both are the **retired PyO3 extension**, with a different API. The pure-Python reader (0.3.0) is not published there yet, so `pip install flatcitybuf` gets you the old bindings — install from the repository instead:
 
 {% raw %}
 
 ```bash
-pip install "flatcitybuf[numpy]"
+pip install "flatcitybuf @ git+https://github.com/cityjson/flatcitybuf#subdirectory=src/py"
+
+# with numpy, worth it for large files
+pip install "flatcitybuf[numpy] @ git+https://github.com/cityjson/flatcitybuf#subdirectory=src/py"
 ```
 
 {% endraw %}
 
-Check what you got — the older `0.2.0` release is the retired PyO3 extension, whose API is different:
+`numpy` is optional: it speeds up bulk vertex and geometry decoding by roughly 2.4×, and every code path has a pure-Python fallback when it is absent.
+
+Check what you got — anything below `0.3.0` is the old extension:
 
 {% raw %}
 
@@ -52,15 +50,7 @@ python -c "import flatcitybuf; print(flatcitybuf.__version__)"
 
 {% endraw %}
 
-If that is below `0.3.0`, install the pure-Python reader straight from the repository:
-
-{% raw %}
-
-```bash
-pip install "flatcitybuf @ git+https://github.com/cityjson/flatcitybuf#subdirectory=src/py"
-```
-
-{% endraw %}
+For a development checkout with [uv](https://docs.astral.sh/uv/), and the full API reference, see [docs/py.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/py.md).
 
 ## Opening a file and reading its header
 
@@ -217,7 +207,7 @@ The same reader works on a remote file: swap the range reader. `HttpRangeReader`
 ```python
 import flatcitybuf as fcb
 
-URL = "https://storage.googleapis.com/flatcitybuf/3dbag_all_index.fcb"
+URL = "https://flatcitybuf.open3d.city/data/3dbag_all_index.fcb"
 
 source = fcb.BufferedRangeReader(fcb.HttpRangeReader(URL))
 reader = fcb.FcbReader.open(source)

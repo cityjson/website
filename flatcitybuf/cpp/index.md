@@ -19,7 +19,7 @@ permalink: /flatcitybuf/cpp/
 
 The C++ library is a from-scratch **native C++17 implementation** that reads *and* writes FlatCityBuf. It replaces the earlier CXX-bridge bindings over the Rust core: there is no Rust toolchain to install, no generated bridge source to compile, no async runtime, and — unless you ask for the HTTP adapter — no TLS dependency.
 
-Source and full documentation: [`src/cpp`](https://github.com/cityjson/flatcitybuf/tree/main/src/cpp).
+Source: [`src/cpp`](https://github.com/cityjson/flatcitybuf/tree/main/src/cpp). The canonical guide — API reference, build options, the `RangeReader` contract — is [docs/cpp.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/cpp.md).
 
 ## Dependencies
 
@@ -149,7 +149,7 @@ Build with `-DFCB_WITH_CURL=ON`:
 #include <fcb/http/curl_range_reader.hpp>
 
 auto transport = std::make_shared<fcb::CurlRangeReader>(
-    "https://storage.googleapis.com/flatcitybuf/3dbag_all_index.fcb");
+    "https://flatcitybuf.open3d.city/data/3dbag_all_index.fcb");
 fcb::FcbReader reader = fcb::FcbReader::open(transport);
 
 auto it = reader.select_bbox({120000, 486000, 121000, 487000});

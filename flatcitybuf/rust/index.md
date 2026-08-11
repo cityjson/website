@@ -17,7 +17,7 @@ permalink: /flatcitybuf/rust/
 
 ---
 
-Rust is the reference implementation: `fcb_core` both reads and writes FlatCityBuf, and is what the [`fcb` CLI]({{ '/flatcitybuf/conversion/' | prepend: site.baseurl }}) and the other implementations are validated against. Its API reference is on [docs.rs/fcb_core](https://docs.rs/fcb_core).
+Rust is the reference implementation: `fcb_core` both reads and writes FlatCityBuf, and is what the [`fcb` CLI]({{ '/flatcitybuf/conversion/' | prepend: site.baseurl }}) and the other implementations are validated against. Its API reference is on [docs.rs/fcb_core](https://docs.rs/fcb_core), and the repository's own guide — crate layout, features, tooling — is [docs/rust.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/rust.md).
 
 ## Adding to your project
 
@@ -37,8 +37,9 @@ Add FlatCityBuf to your `Cargo.toml`:
 [dependencies]
 fcb_core = "0.7.6"
 
-# For HTTP support
-fcb_core = { version = "0.7.6", features = ["http"] }
+# The `http` feature is on by default. For a local-only reader without
+# reqwest, turn it off:
+fcb_core = { version = "0.7.6", default-features = false }
 ```
 
 {% endraw %}
@@ -161,7 +162,7 @@ Add `tokio` to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-fcb_core = { version = "0.7.6", features = ["http"] }
+fcb_core = "0.7.6"   # the `http` feature is on by default
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 ```
 
@@ -174,7 +175,7 @@ use fcb_core::{HttpFcbReader, SpatialQuery};
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let reader =
-        HttpFcbReader::open("https://storage.googleapis.com/flatcitybuf/3dbag_all_index.fcb")
+        HttpFcbReader::open("https://flatcitybuf.open3d.city/data/3dbag_all_index.fcb")
             .await?;
 
     println!("{} features", reader.header().features_count());

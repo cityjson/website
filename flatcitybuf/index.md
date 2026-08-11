@@ -36,17 +36,19 @@ FlatCityBuf has four independent reader implementations. They are validated agai
 | --- | --- | --- | --- | --- |
 | [Rust]({{ '/flatcitybuf/rust/' | prepend: site.baseurl }}) | `fcb_core`, `fcb_cli` (crates.io) | ✅ | ✅ | reference implementation, zero-copy, sync + async HTTP |
 | [C++]({{ '/flatcitybuf/cpp/' | prepend: site.baseurl }}) | build with CMake | ✅ | ✅ | native C++17, no Rust toolchain, no TLS dependency by default |
-| [Python]({{ '/flatcitybuf/python/' | prepend: site.baseurl }}) | `flatcitybuf` (PyPI) | ✅ | — | pure Python, no compiled extension |
+| [Python]({{ '/flatcitybuf/python/' | prepend: site.baseurl }}) | `flatcitybuf` (install from source; PyPI release pending) | ✅ | — | pure Python, no compiled extension |
 | [TypeScript]({{ '/flatcitybuf/typescript/' | prepend: site.baseurl }}) | `@cityjson/flatcitybuf` (npm) | ✅ | — | pure TypeScript, browser + Node.js, no WebAssembly |
 
 All four decode the same things: attributes, geometry, semantics, geometry templates, appearance (materials and textures), and the extents and relationships in the header.
+
+The pages here are a tour; each implementation's full reference lives in the repository — [docs/rust.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/rust.md), [docs/cpp.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/cpp.md), [docs/py.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/py.md), [docs/ts.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/ts.md).
 
 The [`fcb` command-line tool]({{ '/flatcitybuf/conversion/' | prepend: site.baseurl }}) converts CityJSON/CityJSONSeq to `.fcb` and back, and inspects a file — locally or over HTTP.
 
 ## Where to start
 
 1. Grab an [example dataset]({{ '/flatcitybuf/datasets/' | prepend: site.baseurl }}), or convert your own with [the CLI]({{ '/flatcitybuf/conversion/' | prepend: site.baseurl }}).
-2. Look at it: `fcb info city.fcb`, or `fcb inspect city.fcb` for an interactive terminal UI.
+2. Look at it: `fcb inspect city.fcb` — a terminal UI on a terminal, a static report when piped or with `--static`.
 3. Query it from [Rust]({{ '/flatcitybuf/rust/' | prepend: site.baseurl }}), [C++]({{ '/flatcitybuf/cpp/' | prepend: site.baseurl }}), [Python]({{ '/flatcitybuf/python/' | prepend: site.baseurl }}) or [TypeScript]({{ '/flatcitybuf/typescript/' | prepend: site.baseurl }}).
 4. Stuck on performance or indexing choices? See the [FAQ and performance tips]({{ '/flatcitybuf/faq/' | prepend: site.baseurl }}).
 

@@ -42,7 +42,7 @@ All four read the same files and produce the same CityJSON; they differ in what 
 | Read | ✅ | ✅ | ✅ | ✅ |
 | Write | ✅ | ✅ | — | — |
 | HTTP | ✅ async | ✅ (libcurl, opt-in) | ✅ synchronous | ✅ browser + Node.js |
-| Install | `cargo add fcb_core` | CMake, no Rust toolchain | `pip install flatcitybuf`, no compiler | `npm install @cityjson/flatcitybuf`, no WASM |
+| Install | `cargo add fcb_core` | CMake, no Rust toolchain | [pip, from source]({{ '/flatcitybuf/python/#installation' | prepend: site.baseurl }}) for now, no compiler | `npm install @cityjson/flatcitybuf`, no WASM |
 | Best for | pipelines, servers, maximum speed | native apps, engines, plugins | analysis and scripting | web apps and Node.js tools |
 
 If you only need to convert or inspect files, you do not need any of them — use [the `fcb` CLI]({{ '/flatcitybuf/conversion/' | prepend: site.baseurl }}).
@@ -87,7 +87,7 @@ Almost always CORS: the server must expose the `Content-Range` header. See [serv
 
 ### Which attributes can be queried?
 
-Only the ones that were given a B+tree index when the file was written. Everything else is still readable, just not queryable. `fcb info` (or the *Columns* tab of `fcb inspect`) lists what a file has.
+Only the ones that were given a B+tree index when the file was written. Everything else is still readable, just not queryable. `fcb inspect` lists what a file has — in its *Columns* tab, or in the `--static` report.
 
 ### Branching factor considerations for attribute indexing
 
