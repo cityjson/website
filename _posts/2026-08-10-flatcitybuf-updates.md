@@ -20,7 +20,7 @@ Nothing is preprocessed for the viewer: it is the same `.fcb` file the CLI write
 Each binding was rewritten as a native implementation of the format, rather than a wrapper around the Rust core:
 
 - **[C++]({{ site.baseurl }}/flatcitybuf/cpp/)** — a from-scratch C++17 library that both reads *and* writes FlatCityBuf. No Rust toolchain, no FFI bridge, no async runtime, and no TLS dependency unless you opt into the HTTP adapter. All IO goes through one synchronous `RangeReader` interface you can implement yourself, so it drops into engines and desktop applications that own their own threading.
-- **[Python]({{ site.baseurl }}/flatcitybuf/python/) — pure Python.** One universal wheel, no compiled extension, no per-platform builds: `pip install flatcitybuf` and you are done. `numpy` is optional and makes bulk decoding ~2.4× faster.
+- **[Python]({{ site.baseurl }}/flatcitybuf/python/) — pure Python.** One universal wheel, no compiled extension, no per-platform builds. Until the new reader reaches PyPI, [install it from source]({{ site.baseurl }}/flatcitybuf/python/) — the `flatcitybuf` package currently on PyPI is still the retired compiled extension. `numpy` is optional and makes bulk decoding ~2.4× faster.
 - **[TypeScript]({{ site.baseurl }}/flatcitybuf/typescript/) — pure TypeScript.** The WebAssembly binding is retired; `@cityjson/flatcitybuf` now ships no `.wasm` and runs the same code in the browser and in Node.js, with one runtime dependency. It also fixes several bugs the WASM binding had, from attribute queries on non-double columns to a range client that accepted a full-body `200` as if it were the requested range.
 
 Both the Python and TypeScript packages are new APIs rather than drop-in replacements; each page has a migration table.
