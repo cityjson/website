@@ -112,6 +112,8 @@ for i, feature in enumerate(reader.select_all()):
 {: .info }
 Vertices are quantised integers: the real coordinate is `v[n] * transform["scale"][n] + transform["translate"][n]`, and the transform lives on the **metadata** object, not on the feature.
 
+For analysis you can skip CityJSON entirely: `fcb.raw_city_object(view)` and `fcb.raw_city_feature(feature)` return the generated FlatBuffers tables holding the **encoded** geometry — the format's own flat count arrays (`Solids`/`Shells`/`Surfaces`/`Strings`, plus the flat `Boundaries` index list) and the quantised vertices they index into — and `fcb.geometry_type_name` / `fcb.semantic_surface_type_name` turn the raw type tags into their CityJSON names. Nothing has to be nested, allocated or turned into JSON to get a number out of it; [`examples/geometry_analysis.py`](https://github.com/cityjson/flatcitybuf/blob/main/src/py/examples/geometry_analysis.py) sums surface area per semantic surface type that way, and the rest of the [runnable examples](https://github.com/cityjson/flatcitybuf/blob/main/src/py/examples/README.md) cover one capability each. Nesting depth comes from `Geometry.Type()`, never from which array is populated: a `Solid` with one shell and a `MultiSolid` with one solid flatten to byte-identical arrays.
+
 ## Spatial queries
 
 `search_rtree` answers a bounding box from the packed R-tree. Like the attribute query below, it returns `SearchResultItem`s — byte offsets into the feature section — which `feature_at` turns into a feature. That is deliberate: you only pay for decoding the features you actually want.

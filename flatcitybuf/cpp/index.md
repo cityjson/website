@@ -206,7 +206,7 @@ writer.write(out); // streams header, indices and features straight to `out`
 
 ## Examples
 
-The repository ships eight self-contained example programs, one per capability — see [`src/cpp/examples`](https://github.com/cityjson/flatcitybuf/tree/main/src/cpp/examples), which documents the exact output of each:
+The repository ships nine self-contained example programs, one per capability — see [`src/cpp/examples`](https://github.com/cityjson/flatcitybuf/tree/main/src/cpp/examples), which documents the exact output of each:
 
 | Program | Shows |
 | --- | --- |
@@ -217,9 +217,12 @@ The repository ships eight self-contained example programs, one per capability �
 | `fcb_read_features` | raw feature access, without CityJSON conversion |
 | `fcb_custom_reader` | implementing `fcb::RangeReader` yourself |
 | `fcb_read_http` | remote reads over HTTP range requests |
+| `fcb_geometry_analysis` | walking the encoded geometry directly, for analysis |
 | `fcb_write_cityjson` | writing a CityJSONSeq out as `.fcb` |
 
 `fcb_custom_reader` is the one that makes the format's argument concrete: on the Delft file, reading everything costs 7 reads and 90.7% of the bytes, while a bounding-box query costs 4 reads and 31.7% of the bytes for 170 of 1115 features.
+
+`fcb_geometry_analysis` is the one that skips CityJSON entirely: `fcb::Feature::raw()` is public, and returns the generated `CityFeature` table holding the **encoded** geometry — the format's own flat count arrays (`solids`/`shells`/`surfaces`/`strings`, plus the flat `boundaries` index list) and the quantised vertices they index into. That is the cheapest representation to compute over, since nothing has to be nested, allocated or turned into JSON; the example sums surface area per semantic surface type straight from it. Note that nesting depth comes from `Geometry::type()`, never from which array is populated — a `Solid` with one shell and a `MultiSolid` with one solid flatten to byte-identical arrays.
 
 ## Verification
 

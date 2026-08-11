@@ -160,6 +160,15 @@ for await (const feature of await reader.selectAll()) {
 
 `Long`/`Int64` attribute values can exceed `Number.MAX_SAFE_INTEGER`. Pass an `Int64Policy` to choose how they are emitted: a lossy JS number (the default, which keeps the output JSON-serialisable), an exact decimal string, or a throw on any unsafe value.
 
+## Examples
+
+The repository ships [nine runnable example scripts](https://github.com/cityjson/flatcitybuf/blob/main/src/ts/examples/README.md), one per capability — inspecting a header, reading local and remote files, bbox and attribute queries, the per-object attribute schema, implementing your own `RangeReader`, and the `Int64Policy` choices. Every one of them is executed as a real subprocess *and* type-checked by the test suite on each run, so they cannot drift from the API, and the README records the exact output each one printed.
+
+One of them never touches CityJSON. `CityObjectView.rawObject()` hands back the **encoded** geometry — the format's own flat count arrays (`solids`/`shells`/`surfaces`/`strings`, plus the flat `boundaries` index list) — and the package now also exports what you need to interpret it: `GeometryType`, `SemanticSurfaceType`, `NULL_INDEX`, `geometryTypeName`, `semanticSurfaceTypeName`, `decodeBoundaries` and `decodeSemantics`. That is the cheapest representation to compute over, since nothing has to be nested, allocated or turned into JSON; [`geometry-analysis.ts`](https://github.com/cityjson/flatcitybuf/blob/main/src/ts/examples/geometry-analysis.ts) sums surface area per semantic surface type straight from it.
+
+{: .warning }
+Nesting depth comes from the geometry's `type`, never from which array is populated: a `Solid` with one shell and a `MultiSolid` with one solid flatten to byte-identical arrays.
+
 ## A complete example
 
 The [web viewer]({{ '/flatcitybuf/viewer/' | prepend: site.baseurl }}) is built on this package: it opens a `.fcb` over HTTP (the full 3DBAG by default), queries it as you pan the map, and renders the result with deck.gl — all in the browser, with no server component.
