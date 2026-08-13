@@ -35,8 +35,8 @@ FlatCityBuf has four independent reader implementations. They are validated agai
 | Implementation | Package | Reads | Writes | Notes |
 | --- | --- | --- | --- | --- |
 | [Rust]({{ '/flatcitybuf/rust/' | prepend: site.baseurl }}) | `fcb_core`, `fcb_cli` (crates.io) | ✅ | ✅ | reference implementation, zero-copy, sync + async HTTP |
-| [C++]({{ '/flatcitybuf/cpp/' | prepend: site.baseurl }}) | build with CMake | ✅ | ✅ | native C++17, no Rust toolchain, no TLS dependency by default |
-| [Python]({{ '/flatcitybuf/python/' | prepend: site.baseurl }}) | `flatcitybuf` (install from source; PyPI release pending) | ✅ | — | pure Python, no compiled extension |
+| [C++]({{ '/flatcitybuf/cpp/' | prepend: site.baseurl }}) | vcpkg (custom registry) or CMake | ✅ | ✅ | native C++17, no Rust toolchain, no TLS dependency by default |
+| [Python]({{ '/flatcitybuf/python/' | prepend: site.baseurl }}) | `flatcitybuf` (PyPI) | ✅ | — | pure Python, no compiled extension |
 | [TypeScript]({{ '/flatcitybuf/typescript/' | prepend: site.baseurl }}) | `@cityjson/flatcitybuf` (npm) | ✅ | — | pure TypeScript, browser + Node.js, no WebAssembly |
 
 All four decode the same things: attributes, geometry, semantics, geometry templates, appearance (materials and textures), and the extents and relationships in the header.

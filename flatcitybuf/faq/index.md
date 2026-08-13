@@ -42,7 +42,7 @@ All four read the same files and produce the same CityJSON; they differ in what 
 | Read | ✅ | ✅ | ✅ | ✅ |
 | Write | ✅ | ✅ | — | — |
 | HTTP | ✅ async | ✅ (libcurl, opt-in) | ✅ synchronous | ✅ browser + Node.js |
-| Install | `cargo add fcb_core` | CMake, no Rust toolchain | [pip, from source]({{ '/flatcitybuf/python/#installation' | prepend: site.baseurl }}) for now, no compiler | `npm install @cityjson/flatcitybuf`, no WASM |
+| Install | `cargo add fcb_core` | vcpkg or CMake, no Rust toolchain | `pip install flatcitybuf`, no compiler | `npm install @cityjson/flatcitybuf`, no WASM |
 | Best for | pipelines, servers, maximum speed | native apps, engines, plugins | analysis and scripting | web apps and Node.js tools |
 
 If you only need to convert or inspect files, you do not need any of them — use [the `fcb` CLI]({{ '/flatcitybuf/conversion/' | prepend: site.baseurl }}).

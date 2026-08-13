@@ -42,6 +42,24 @@ sudo apt-get install libflatbuffers-dev nlohmann-json3-dev doctest-dev
 
 {% endraw %}
 
+## Installing with vcpkg
+
+The `flatcitybuf` port lives in a [custom vcpkg registry](https://github.com/HideBa/vcpkg), not the built-in microsoft/vcpkg one. Add the registry to your project's `vcpkg-configuration.json` with `"packages": ["flatcitybuf"]`, then declare the dependency in `vcpkg.json`:
+
+{% raw %}
+
+```json
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "dependencies": ["flatcitybuf"]
+}
+```
+
+{% endraw %}
+
+Use `{ "name": "flatcitybuf", "features": ["curl"] }` instead to get the HTTP range-request reader. The exact registry configuration (with the current baselines) is in [`src/cpp/INSTALL.md`](https://github.com/cityjson/flatcitybuf/blob/main/src/cpp/INSTALL.md#install-via-vcpkg). Configure with vcpkg's toolchain file and integrate exactly as in [the CMake snippet below](#building-and-installing) — the port installs the same `flatcitybuf::flatcitybuf` target the manual build does.
+
 ## Building and installing
 
 {% raw %}

@@ -24,23 +24,20 @@ This page documents the pure-Python reader (version 0.3.0 and later). It is **no
 
 ## Installation
 
-{: .warning }
-PyPI currently serves only `flatcitybuf` 0.1.2 and 0.2.0, and both are the **retired PyO3 extension**, with a different API. The pure-Python reader (0.3.0) is not published there yet, so `pip install flatcitybuf` gets you the old bindings — install from the repository instead:
-
 {% raw %}
 
 ```bash
-pip install "flatcitybuf @ git+https://github.com/cityjson/flatcitybuf#subdirectory=src/py"
+pip install flatcitybuf
 
 # with numpy, worth it for large files
-pip install "flatcitybuf[numpy] @ git+https://github.com/cityjson/flatcitybuf#subdirectory=src/py"
+pip install "flatcitybuf[numpy]"
 ```
 
 {% endraw %}
 
-`numpy` is optional: it speeds up bulk vertex and geometry decoding by roughly 2.4×, and every code path has a pure-Python fallback when it is absent.
+PyPI serves the pure-Python reader from version `0.3.1` onwards; `0.2.0` and earlier are the retired PyO3 extension. `numpy` is optional: it speeds up bulk vertex and geometry decoding by roughly 2.4×, and every code path has a pure-Python fallback when it is absent.
 
-Check what you got — anything below `0.3.0` is the old extension:
+If you had the package pinned before, check what you have — anything below `0.3.0` is the old extension:
 
 {% raw %}
 

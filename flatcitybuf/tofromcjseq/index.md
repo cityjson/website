@@ -50,8 +50,8 @@ cargo build --release -p fcb_cli
 
 The binary is then at `target/release/fcb`.
 
-{: .warning }
-`inspect` gained its static report — and absorbed the older summary subcommand — after the current crates.io release. If your `fcb` still has a separate `info` subcommand, build it from source (option 2) to follow this page.
+{: .info }
+If your `fcb` still has a separate `info` subcommand, it predates `fcb_cli` 0.7.7 — `inspect` absorbed it. Re-run `cargo install fcb_cli --locked` to update.
 
 ## Commands
 
