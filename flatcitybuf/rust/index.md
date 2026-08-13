@@ -17,7 +17,7 @@ permalink: /flatcitybuf/rust/
 
 ---
 
-Rust is the reference implementation: `fcb_core` both reads and writes FlatCityBuf, and is what the [`fcb` CLI]({{ '/flatcitybuf/conversion/' | prepend: site.baseurl }}) and the other implementations are validated against. Its API reference is on [docs.rs/fcb_core](https://docs.rs/fcb_core), and the repository's own guide — crate layout, features, tooling — is [docs/rust.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/rust.md).
+Rust is the reference implementation: `fcb_core` both reads and writes FlatCityBuf, and is what the [`fcb` CLI]({{ '/flatcitybuf/conversion/' | prepend: site.baseurl }}) and the other implementations are validated against. Its API reference is on [docs.rs/fcb_core](https://docs.rs/fcb_core) (also published at [cityjson.github.io/flatcitybuf/rust](https://cityjson.github.io/flatcitybuf/rust/)), and the repository's own guide — crate layout, features, tooling — is [docs/rust.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/rust.md).
 
 ## Adding to your project
 

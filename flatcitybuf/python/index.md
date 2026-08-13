@@ -47,7 +47,7 @@ python -c "import flatcitybuf; print(flatcitybuf.__version__)"
 
 {% endraw %}
 
-For a development checkout with [uv](https://docs.astral.sh/uv/), and the full API reference, see [docs/py.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/py.md).
+The rendered API reference is at [cityjson.github.io/flatcitybuf/python](https://cityjson.github.io/flatcitybuf/python/). For a development checkout with [uv](https://docs.astral.sh/uv/), see [docs/py.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/py.md).
 
 ## Opening a file and reading its header
 

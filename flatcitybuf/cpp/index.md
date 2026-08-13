@@ -19,7 +19,7 @@ permalink: /flatcitybuf/cpp/
 
 The C++ library is a from-scratch **native C++17 implementation** that reads *and* writes FlatCityBuf. It replaces the earlier CXX-bridge bindings over the Rust core: there is no Rust toolchain to install, no generated bridge source to compile, no async runtime, and — unless you ask for the HTTP adapter — no TLS dependency.
 
-Source: [`src/cpp`](https://github.com/cityjson/flatcitybuf/tree/main/src/cpp). The canonical guide — API reference, build options, the `RangeReader` contract — is [docs/cpp.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/cpp.md).
+Source: [`src/cpp`](https://github.com/cityjson/flatcitybuf/tree/main/src/cpp). The rendered API reference is at [cityjson.github.io/flatcitybuf/cpp](https://cityjson.github.io/flatcitybuf/cpp/); the canonical guide — build options, the `RangeReader` contract — is [docs/cpp.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/cpp.md).
 
 ## Dependencies
 

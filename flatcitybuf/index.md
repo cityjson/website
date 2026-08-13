@@ -41,7 +41,10 @@ FlatCityBuf has four independent reader implementations. They are validated agai
 
 All four decode the same things: attributes, geometry, semantics, geometry templates, appearance (materials and textures), and the extents and relationships in the header.
 
-The pages here are a tour; each implementation's full reference lives in the repository — [docs/rust.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/rust.md), [docs/cpp.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/cpp.md), [docs/py.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/py.md), [docs/ts.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/ts.md).
+{: .highlight }
+The **full API reference for all four implementations** is published at **[cityjson.github.io/flatcitybuf](https://cityjson.github.io/flatcitybuf/)** — [Rust](https://cityjson.github.io/flatcitybuf/rust/), [C++](https://cityjson.github.io/flatcitybuf/cpp/), [Python](https://cityjson.github.io/flatcitybuf/python/) and [TypeScript](https://cityjson.github.io/flatcitybuf/typescript/), rebuilt on every push to `main`.
+
+The pages here are a tour; each implementation's guide (building, testing, design notes) lives in the repository — [docs/rust.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/rust.md), [docs/cpp.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/cpp.md), [docs/py.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/py.md), [docs/ts.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/ts.md).
 
 The [`fcb` command-line tool]({{ '/flatcitybuf/conversion/' | prepend: site.baseurl }}) converts CityJSON/CityJSONSeq to `.fcb` and back, and inspects a file — locally or over HTTP.
 

@@ -22,7 +22,7 @@ permalink: /flatcitybuf/typescript/
 {: .warning }
 This replaces the earlier WebAssembly binding. If you used `HttpFcbReader`/`WasmSpatialQuery`/`select_spatial`, see [migrating from the WASM binding](#migrating-from-the-wasm-binding).
 
-Requirements: **ESM only** (import it, `require` will not work) and **Node ≥ 22.12** for the Node entry point. The browser entry point needs only `fetch` and `Blob`. The full API reference is [docs/ts.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/ts.md) in the repository.
+Requirements: **ESM only** (import it, `require` will not work) and **Node ≥ 22.12** for the Node entry point. The browser entry point needs only `fetch` and `Blob`. The rendered API reference is at [cityjson.github.io/flatcitybuf/typescript](https://cityjson.github.io/flatcitybuf/typescript/), and the repository's guide is [docs/ts.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/ts.md).
 
 ## Installation
 
