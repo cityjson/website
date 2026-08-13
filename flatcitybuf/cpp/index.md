@@ -19,7 +19,7 @@ permalink: /flatcitybuf/cpp/
 
 The C++ library is a from-scratch **native C++17 implementation** that reads *and* writes FlatCityBuf. It replaces the earlier CXX-bridge bindings over the Rust core: there is no Rust toolchain to install, no generated bridge source to compile, no async runtime, and — unless you ask for the HTTP adapter — no TLS dependency.
 
-Source and full documentation: [`src/cpp`](https://github.com/cityjson/flatcitybuf/tree/main/src/cpp).
+Source: [`src/cpp`](https://github.com/cityjson/flatcitybuf/tree/main/src/cpp). The rendered API reference is at [cityjson.github.io/flatcitybuf/cpp](https://cityjson.github.io/flatcitybuf/cpp/); the canonical guide — build options, the `RangeReader` contract — is [docs/cpp.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/cpp.md).
 
 ## Dependencies
 
@@ -41,6 +41,24 @@ sudo apt-get install libflatbuffers-dev nlohmann-json3-dev doctest-dev
 ```
 
 {% endraw %}
+
+## Installing with vcpkg
+
+The `flatcitybuf` port lives in a [custom vcpkg registry](https://github.com/HideBa/vcpkg), not the built-in microsoft/vcpkg one. Add the registry to your project's `vcpkg-configuration.json` with `"packages": ["flatcitybuf"]`, then declare the dependency in `vcpkg.json`:
+
+{% raw %}
+
+```json
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "dependencies": ["flatcitybuf"]
+}
+```
+
+{% endraw %}
+
+Use `{ "name": "flatcitybuf", "features": ["curl"] }` instead to get the HTTP range-request reader. The exact registry configuration (with the current baselines) is in [`src/cpp/INSTALL.md`](https://github.com/cityjson/flatcitybuf/blob/main/src/cpp/INSTALL.md#install-via-vcpkg). Configure with vcpkg's toolchain file and integrate exactly as in [the CMake snippet below](#building-and-installing) — the port installs the same `flatcitybuf::flatcitybuf` target the manual build does.
 
 ## Building and installing
 
@@ -149,7 +167,7 @@ Build with `-DFCB_WITH_CURL=ON`:
 #include <fcb/http/curl_range_reader.hpp>
 
 auto transport = std::make_shared<fcb::CurlRangeReader>(
-    "https://storage.googleapis.com/flatcitybuf/3dbag_all_index.fcb");
+    "https://flatcitybuf.open3d.city/data/3dbag_all_index.fcb");
 fcb::FcbReader reader = fcb::FcbReader::open(transport);
 
 auto it = reader.select_bbox({120000, 486000, 121000, 487000});
@@ -206,7 +224,7 @@ writer.write(out); // streams header, indices and features straight to `out`
 
 ## Examples
 
-The repository ships eight self-contained example programs, one per capability — see [`src/cpp/examples`](https://github.com/cityjson/flatcitybuf/tree/main/src/cpp/examples), which documents the exact output of each:
+The repository ships nine self-contained example programs, one per capability — see [`src/cpp/examples`](https://github.com/cityjson/flatcitybuf/tree/main/src/cpp/examples), which documents the exact output of each:
 
 | Program | Shows |
 | --- | --- |
@@ -217,9 +235,12 @@ The repository ships eight self-contained example programs, one per capability �
 | `fcb_read_features` | raw feature access, without CityJSON conversion |
 | `fcb_custom_reader` | implementing `fcb::RangeReader` yourself |
 | `fcb_read_http` | remote reads over HTTP range requests |
+| `fcb_geometry_analysis` | walking the encoded geometry directly, for analysis |
 | `fcb_write_cityjson` | writing a CityJSONSeq out as `.fcb` |
 
 `fcb_custom_reader` is the one that makes the format's argument concrete: on the Delft file, reading everything costs 7 reads and 90.7% of the bytes, while a bounding-box query costs 4 reads and 31.7% of the bytes for 170 of 1115 features.
+
+`fcb_geometry_analysis` is the one that skips CityJSON entirely: `fcb::Feature::raw()` is public, and returns the generated `CityFeature` table holding the **encoded** geometry — the format's own flat count arrays (`solids`/`shells`/`surfaces`/`strings`, plus the flat `boundaries` index list) and the quantised vertices they index into. That is the cheapest representation to compute over, since nothing has to be nested, allocated or turned into JSON; the example sums surface area per semantic surface type straight from it. Note that nesting depth comes from `Geometry::type()`, never from which array is populated — a `Solid` with one shell and a `MultiSolid` with one solid flatten to byte-identical arrays.
 
 ## Verification
 

@@ -28,21 +28,16 @@ This page documents the pure-Python reader (version 0.3.0 and later). It is **no
 
 ```bash
 pip install flatcitybuf
-```
 
-{% endraw %}
-
-Optional, and worth it for large files: `numpy` speeds up bulk vertex and geometry decoding by roughly 2.4× (every code path has a pure-Python fallback when it is absent).
-
-{% raw %}
-
-```bash
+# with numpy, worth it for large files
 pip install "flatcitybuf[numpy]"
 ```
 
 {% endraw %}
 
-Check what you got — the older `0.2.0` release is the retired PyO3 extension, whose API is different:
+PyPI serves the pure-Python reader from version `0.3.1` onwards; `0.2.0` and earlier are the retired PyO3 extension. `numpy` is optional: it speeds up bulk vertex and geometry decoding by roughly 2.4×, and every code path has a pure-Python fallback when it is absent.
+
+If you had the package pinned before, check what you have — anything below `0.3.0` is the old extension:
 
 {% raw %}
 
@@ -52,15 +47,7 @@ python -c "import flatcitybuf; print(flatcitybuf.__version__)"
 
 {% endraw %}
 
-If that is below `0.3.0`, install the pure-Python reader straight from the repository:
-
-{% raw %}
-
-```bash
-pip install "flatcitybuf @ git+https://github.com/cityjson/flatcitybuf#subdirectory=src/py"
-```
-
-{% endraw %}
+The rendered API reference is at [cityjson.github.io/flatcitybuf/python](https://cityjson.github.io/flatcitybuf/python/). For a development checkout with [uv](https://docs.astral.sh/uv/), see [docs/py.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/py.md).
 
 ## Opening a file and reading its header
 
@@ -121,6 +108,8 @@ for i, feature in enumerate(reader.select_all()):
 
 {: .info }
 Vertices are quantised integers: the real coordinate is `v[n] * transform["scale"][n] + transform["translate"][n]`, and the transform lives on the **metadata** object, not on the feature.
+
+For analysis you can skip CityJSON entirely: `fcb.raw_city_object(view)` and `fcb.raw_city_feature(feature)` return the generated FlatBuffers tables holding the **encoded** geometry — the format's own flat count arrays (`Solids`/`Shells`/`Surfaces`/`Strings`, plus the flat `Boundaries` index list) and the quantised vertices they index into — and `fcb.geometry_type_name` / `fcb.semantic_surface_type_name` turn the raw type tags into their CityJSON names. Nothing has to be nested, allocated or turned into JSON to get a number out of it; [`examples/geometry_analysis.py`](https://github.com/cityjson/flatcitybuf/blob/main/src/py/examples/geometry_analysis.py) sums surface area per semantic surface type that way, and the rest of the [runnable examples](https://github.com/cityjson/flatcitybuf/blob/main/src/py/examples/README.md) cover one capability each. Nesting depth comes from `Geometry.Type()`, never from which array is populated: a `Solid` with one shell and a `MultiSolid` with one solid flatten to byte-identical arrays.
 
 ## Spatial queries
 
@@ -217,7 +206,7 @@ The same reader works on a remote file: swap the range reader. `HttpRangeReader`
 ```python
 import flatcitybuf as fcb
 
-URL = "https://storage.googleapis.com/flatcitybuf/3dbag_all_index.fcb"
+URL = "https://flatcitybuf.open3d.city/data/3dbag_all_index.fcb"
 
 source = fcb.BufferedRangeReader(fcb.HttpRangeReader(URL))
 reader = fcb.FcbReader.open(source)

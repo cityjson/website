@@ -29,8 +29,8 @@ Both the Python and TypeScript packages are new APIs rather than drop-in replace
 
 The `fcb` CLI moved to positional arguments (`fcb ser input.city.jsonl output.fcb`—no more `-i`/`-o`), and gained a way to look inside a file before reading it:
 
-- `fcb info city.fcb` prints size, version, feature count, extent, transform and, most usefully, which attributes carry an index and are therefore queryable.
-- `fcb inspect city.fcb` opens an interactive terminal UI with metadata, the full column schema and a map of the dataset's extent. It takes a **URL** as well as a path, and reads only the header—so inspecting that 68GB file over the network is instant.
+- `fcb inspect city.fcb` opens an interactive terminal UI with metadata, the full column schema and a map of the dataset's extent. Piped, or with `--static`, it prints a plain report instead: size, version, feature count, extent, transform and, most usefully, which attributes carry an index and are therefore queryable.
+- It takes a **URL** as well as a path, and reads only the header—so inspecting that 68GB file over the network is instant.
 
 Details on [the CLI page]({{ site.baseurl }}/flatcitybuf/conversion/).
 

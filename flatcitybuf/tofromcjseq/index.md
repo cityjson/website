@@ -20,7 +20,7 @@ permalink: /flatcitybuf/conversion/
 {: .highlight }
 If you have CityJSON files, you first need to [convert them to the CityJSONSeq format]({{ '/cityjsonseq/#cjseq-cityjson--cityjsonseq' | prepend: site.baseurl }}).
 
-`fcb` converts between CityJSON/CityJSONSeq and FlatCityBuf, and inspects `.fcb` files. It is written in Rust ([code on GitHub](https://github.com/cityjson/flatcitybuf)).
+`fcb` converts between CityJSON/CityJSONSeq and FlatCityBuf, and inspects `.fcb` files. It is written in Rust ([code on GitHub](https://github.com/cityjson/flatcitybuf)); the crate-level reference is [docs/rust.md](https://github.com/cityjson/flatcitybuf/blob/main/docs/rust.md).
 
 ## Installation
 
@@ -50,6 +50,9 @@ cargo build --release -p fcb_cli
 
 The binary is then at `target/release/fcb`.
 
+{: .info }
+If your `fcb` still has a separate `info` subcommand, it predates `fcb_cli` 0.7.7 — `inspect` absorbed it. Re-run `cargo install fcb_cli --locked` to update.
+
 ## Commands
 
 {% raw %}
@@ -65,8 +68,7 @@ Commands:
   deser    Convert FCB to CityJSON
   cbor     Convert CityJSON to CBOR
   bson     Convert CityJSON to BSON
-  info     Show info about FCB file
-  inspect  Interactively inspect an FCB file or URL in a terminal UI
+  inspect  Inspect an FCB file or URL: a terminal UI on a TTY, a static report otherwise
   help     Print this message or the help of the given subcommand(s)
 ```
 
@@ -209,36 +211,50 @@ The output is a CityJSONSeq document: one metadata line, then one `CityJSONFeatu
 
 ## Inspecting a file
 
-### `fcb info` — a one-shot summary
+`fcb inspect` reads the header of a **local file or an HTTP(S) URL**. For a remote file it fetches only the header bytes with a range request, so pointing it at a 68GB file on cloud storage is instant.
 
 {% raw %}
 
 ```bash
-$ fcb info delft.fcb
+fcb inspect delft.fcb
+fcb inspect https://flatcitybuf.open3d.city/data/3dbag_all_index.fcb
+```
 
-━━━ FlatCityBuf File Information
-━━━ ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{% endraw %}
+
+### `fcb inspect --static` — a one-shot report
+
+With `--static`, or whenever stdout is not a terminal (a pipe, a redirect, CI), `inspect` prints a plain-text report instead of the UI, so it composes in a script:
+
+{% raw %}
+
+```bash
+$ fcb inspect --static delft.fcb
 
 ▶ File Details
-  Path: delft.fcb
+  Source: delft.fcb
   Size: 7.31 MB
   Version: 2.0
   Title: 3DBAG
 
 ▶ Dataset
   Features: 1115
+  Columns: 44
   Geospatial Extent: Yes
     Min: [84501.55, 445805.03, -3.75]
     Max: [85675.23, 446983.47, 95.04]
     Dimensions: 1173.68 × 1178.44 × 98.79
 
 ▶ Indices
-  Spatial R-tree: Yes
+  Spatial R-tree: Yes (node size: 16)
   Attribute Indices: 44 (B+Tree)
     1. b3_bag_bag_overlap
     2. b3_dak_type
     3. b3_h_dak_50p
     ... 41 more attributes...
+
+▶ Coordinate Reference System
+  CRS: EPSG:7415
 
 ▶ Coordinate Transform
   Scale: [0.001000, 0.001000, 0.001000]
@@ -251,18 +267,7 @@ The list of attribute indices is the list of attributes you can actually query: 
 
 ### `fcb inspect` — an interactive terminal UI
 
-`fcb inspect` opens a full-screen terminal UI on the header of a **local file or an HTTP(S) URL**. For a remote file it reads only the header bytes with a range request, so pointing it at a 68GB file on cloud storage is instant.
-
-{% raw %}
-
-```bash
-fcb inspect delft.fcb
-fcb inspect https://storage.googleapis.com/flatcitybuf/3dbag_all_index.fcb
-```
-
-{% endraw %}
-
-It has three tabs. **Metadata**:
+On a terminal, the same command opens a full-screen UI with three tabs. **Metadata**:
 
 {% raw %}
 
@@ -306,7 +311,7 @@ It has three tabs. **Metadata**:
 
 **Map** — for a geographic CRS, the dataset's extent drawn on a world coastline; for a projected CRS (like the EPSG:7415 above) it prints the extent instead of guessing a reprojection.
 
-Keys: `Tab`/`←`/`→` (or `h`/`l`) switch tabs, `↑`/`↓` (or `k`/`j`) scroll, `g`/`G` jump to top/bottom, `q`/`Esc`/`Ctrl-C` quit. It needs a real terminal — piping it into a file exits with a friendly error rather than emitting escape codes.
+Keys: `Tab`/`←`/`→` (or `h`/`l`) switch tabs, `↑`/`↓` (or `k`/`j`) scroll, `g`/`G` jump to top/bottom, `q`/`Esc`/`Ctrl-C` quit. The UI needs a real terminal; without one you get the static report above rather than escape codes in your file.
 
 ## Other conversions
 
