@@ -59,7 +59,7 @@ The `flatcitybuf` port lives in a [custom vcpkg registry](https://github.com/Hid
     {
       "kind": "git",
       "repository": "https://github.com/HideBa/vcpkg",
-      "baseline": "5926be2ef7acd4371eaaf8dae1ffe507b71c5e58",
+      "baseline": "9171cc35ccca68dc481c7a3718d7785a2fb5c20e",
       "packages": ["flatcitybuf"]
     }
   ]
@@ -84,7 +84,7 @@ and declare the dependency in `vcpkg.json`:
 
 Use `{ "name": "flatcitybuf", "features": ["curl"] }` instead to get the HTTP range-request reader. Configure with vcpkg's toolchain file (`-DCMAKE_TOOLCHAIN_FILE=<vcpkg>/scripts/buildsystems/vcpkg.cmake`) and integrate exactly as in [the CMake snippet below](#building-and-installing) — the port installs the same `flatcitybuf::flatcitybuf` target the manual build does.
 
-The baselines above pin what you get (currently port 0.8.1, built from the `cpp-v0.8.1` tag); they move with each release, and [`src/cpp/INSTALL.md`](https://github.com/cityjson/flatcitybuf/blob/main/src/cpp/INSTALL.md#install-via-vcpkg) always records the current ones. To pick up a newer release later, bump the registry baseline to a newer commit of the registry repository.
+The baselines above pin what you get (currently port 0.9.0, built from the `cpp-v0.9.0` tag); they move with each release, and [`src/cpp/INSTALL.md`](https://github.com/cityjson/flatcitybuf/blob/main/src/cpp/INSTALL.md#install-via-vcpkg) always records the current ones. To pick up a newer release later, bump the registry baseline to a newer commit of the registry repository.
 
 ## Building and installing
 
