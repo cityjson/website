@@ -35,11 +35,11 @@ Add FlatCityBuf to your `Cargo.toml`:
 {% raw %}
 ```toml
 [dependencies]
-fcb_core = "0.7.7"
+fcb_core = "0.7.8"
 
 # The `http` feature is on by default. For a local-only reader without
 # reqwest, turn it off:
-fcb_core = { version = "0.7.7", default-features = false }
+fcb_core = { version = "0.7.8", default-features = false }
 ```
 
 {% endraw %}
@@ -162,7 +162,7 @@ Add `tokio` to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-fcb_core = "0.7.7"   # the `http` feature is on by default
+fcb_core = "0.7.8"   # the `http` feature is on by default
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 ```
 
