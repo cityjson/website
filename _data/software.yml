@@ -68,6 +68,18 @@
   interface: cli
   type: app
 
+- name: CityJSON MCP / Datum
+  webpage: https://github.com/Yarroudh/cityjson-mcp
+  description: MCP tools for inspecting, validating, transforming, and querying CityJSON models, with Datum providing a chat application interface.
+  foss: true
+  category:
+    - parser
+    - validator
+    - converter
+    - storage
+  interface: both
+  type: app
+
 - name: 3D City DB
   webpage: http://www.3dcitydb.org
   description: Free geo-database to store, represent, and manage virtual 3D city models on top of a standard spatial relational database (PostGIS and Oracle)
