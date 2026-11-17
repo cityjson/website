@@ -6,3 +6,16 @@ updates:
       interval: daily
     allow:
       - dependency-type: direct
+  # Action updates change the workflow and its entry in
+  # .github/workflows/actions.lock together. A release has to be a week old
+  # before it is proposed.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+          - "*"
